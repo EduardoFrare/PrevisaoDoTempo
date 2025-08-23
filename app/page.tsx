@@ -113,7 +113,7 @@ function WeatherApp() {
 
   return (
     <div className="app-container">
-      <h1 className="title">Previsão do Tempo!</h1>
+      <h1 className="title">Previsão do Tempo</h1>
 
       <div className="controls">
         <select
