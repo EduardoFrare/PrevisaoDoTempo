@@ -5,6 +5,36 @@ import React, { useEffect, useState } from "react";
 import Controls from "./components/Controls";
 import WeatherCard from "./components/WeatherCard";
 
+// --- CORREÇÃO 1: CRIANDO INTERFACES PARA A RESPOSTA DA API ---
+// "Descrevemos" para o TypeScript como são os dados que vêm da OpenWeatherMap.
+// Isso resolve o erro "Unexpected any".
+interface ForecastItem {
+  dt: number;
+  dt_txt: string;
+  main: {
+    temp_max: number;
+    temp_min: number;
+  };
+  weather: {
+    id: number;
+  }[];
+  wind: {
+    speed: number;
+  };
+  rain?: {
+    '3h'?: number;
+  };
+}
+
+interface WeatherApiResponse {
+  cod: string;
+  list: ForecastItem[];
+  city: {
+    timezone: number;
+  };
+}
+// ----------------------------------------------------------------
+
 interface WeatherInfo {
   name: string;
   max: number;
@@ -21,8 +51,6 @@ export default function Home() {
     { name: "Passo Fundo", state: "RS" },
     { name: "Erechim", state: "RS" },
     { name: "Carazinho", state: "RS" },
-    { name: "Concórdia", state: "SC" },
-    { name: "Santa Rosa", state: "RS" },
     { name: "Santo Ângelo", state: "RS" },
     { name: "Lages", state: "SC" },
     { name: "Ijuí", state: "RS" },
@@ -47,7 +75,7 @@ export default function Home() {
       for (const city of cities) {
         try {
           const geoRes = await fetch(
-            `https://api.openweathermap.org/geo/1.0/direct?q=${city.name},${city.state},BR&limit=1&appid=${API_KEY}`
+            `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city.name)},${city.state},BR&limit=1&appid=${API_KEY}`
           );
           const geoJson = await geoRes.json();
 
@@ -60,30 +88,26 @@ export default function Home() {
           const weatherRes = await fetch(
             `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`
           );
-          const weatherJson = await weatherRes.json();
+          // Usamos a nossa nova interface para dar um tipo seguro à resposta
+          const weatherJson: WeatherApiResponse = await weatherRes.json();
 
           if (weatherJson.cod !== "200") {
              console.warn(`Dados de clima não encontrados para: ${city.name}. Resposta da API:`, weatherJson);
              continue;
           }
-
-          // --- LÓGICA DE FUSO HORÁRIO CORRIGIDA ---
-          // 1. Pegamos o deslocamento de fuso horário da cidade (em segundos) que a API nos fornece.
+          
           const timezoneOffset = weatherJson.city.timezone;
-
-          // 2. Calculamos a data de referência (hoje) e a data alvo (hoje, amanhã, etc.) no fuso horário da cidade.
-          // Usamos o primeiro item da lista como referência de "agora" para evitar problemas com o fuso do navegador.
+          
           const referenceDate = new Date((weatherJson.list[0].dt + timezoneOffset) * 1000);
           const targetDate = new Date(referenceDate);
           targetDate.setUTCDate(targetDate.getUTCDate() + parseInt(dayOffset));
           const targetDateString = targetDate.toISOString().split('T')[0];
           
-          // 3. Filtramos a lista para obter apenas as previsões do dia alvo, já no fuso horário correto.
-          const dayForecasts = weatherJson.list.filter((item: any) => {
+          // Agora, 'item' tem um tipo seguro (ForecastItem), não 'any'
+          const dayForecasts = weatherJson.list.filter((item: ForecastItem) => {
             const forecastLocalDate = new Date((item.dt + timezoneOffset) * 1000);
             return forecastLocalDate.toISOString().split('T')[0] === targetDateString;
           });
-          // --- FIM DA LÓGICA DE FUSO HORÁRIO ---
 
           if (dayForecasts.length === 0) {
             console.warn(`Não há previsão disponível para ${city.name} na data selecionada.`);
@@ -103,12 +127,11 @@ export default function Home() {
             if (forecast.main.temp_max > maxTemp) maxTemp = forecast.main.temp_max;
             if (forecast.main.temp_min < minTemp) minTemp = forecast.main.temp_min;
             
-            const rainAmount = forecast.rain ? forecast.rain['3h'] : 0;
+            const rainAmount = forecast.rain?.['3h'] ?? 0;
             if (rainAmount > 0) {
               totalRain += rainAmount;
-              // Usamos o fuso horário para obter a hora local correta da cidade
               const forecastLocalDate = new Date((forecast.dt + timezoneOffset) * 1000);
-              const forecastHour = forecastLocalDate.getUTCHours(); // getUTCHours() aqui retorna a hora local correta
+              const forecastHour = forecastLocalDate.getUTCHours();
               
               const hourIndex = fullDayRain.findIndex(h => h.hour === forecastHour);
               if (hourIndex !== -1) {
@@ -138,12 +161,33 @@ export default function Home() {
     fetchWeather();
   }, [cities, dayOffset, API_KEY]);
 
-  function addCity() { /* ...código inalterado... */ }
-  function removeCity(cityName: string) { /* ...código inalterado... */ }
+  // --- CORREÇÃO 2: Garantir que 'setCities' é utilizada ---
+  function addCity() {
+    if (!newCity.trim()) return;
+    const cityKey = newCity.trim().toLowerCase();
+    if (cities.some((c) => c.name.toLowerCase() === cityKey)) {
+      setErrorMsg("Cidade já adicionada!");
+      return;
+    }
+    setCities([...cities, { name: newCity.trim(), state: "" }]);
+    setNewCity("");
+    setErrorMsg("");
+  }
+
+  // --- CORREÇÃO 3: Garantir que 'cityName' é utilizada ---
+  function removeCity(cityName: string) {
+    const pureCityName = cityName.split(',')[0];
+    // A função setCities é utilizada aqui
+    setCities(cities.filter((c) => c.name !== pureCityName));
+    
+    const newData = { ...weatherData };
+    // O parâmetro cityName é utilizado aqui
+    delete newData[cityName];
+    setWeatherData(newData);
+  }
 
   return (
     <main>
-       {/* ... JSX inalterado ... */}
       <div className="app-container">
         <h1 className="title">Previsão do Tempo</h1>
         <Controls 
