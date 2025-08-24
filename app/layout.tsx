@@ -14,8 +14,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Meu App de Clima",
-  description: "Previsão do tempo criada com Next.js",
+  title: "Cards de Clima",
+  description: "Cards fáceis para visualização de previsão do tempo.",
 };
 
 export default function RootLayout({
