@@ -22,12 +22,15 @@ interface WeatherCardProps {
 
 // Função auxiliar para obter o ícone do clima
 function getWeatherIcon(code: number) {
-    if ([0].includes(code)) return "☀️";
-    if ([1, 2, 3].includes(code)) return "⛅";
-    if ([45, 48].includes(code)) return "🌫️";
-    if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "🌧️";
-    if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄️";
-    if ([95, 96, 99].includes(code)) return "⛈️";
+    // Mapeamento para os códigos da OpenWeatherMap
+    if (code >= 200 && code < 300) return "⛈️"; // Trovoada
+    if (code >= 300 && code < 400) return "💧"; // Chuvisco (Drizzle)
+    if (code >= 500 && code < 600) return "🌧️"; // Chuva
+    if (code >= 600 && code < 700) return "❄️"; // Neve
+    if (code >= 700 && code < 800) return "🌫️"; // Névoa, Fumaça, etc.
+    if (code === 800) return "☀️"; // Céu Limpo
+    if (code === 801 || code === 802) return "🌤️"; // Poucas Nuvens
+    if (code === 803 || code === 804) return "☁️"; // Nublado
     return "❔";
 }
 
