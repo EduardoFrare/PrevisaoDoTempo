@@ -5,9 +5,7 @@ import React, { useEffect, useState } from "react";
 import Controls from "./components/Controls";
 import WeatherCard from "./components/WeatherCard";
 
-// --- CORREÇÃO 1: CRIANDO INTERFACES PARA A RESPOSTA DA API ---
-// "Descrevemos" para o TypeScript como são os dados que vêm da OpenWeatherMap.
-// Isso resolve o erro "Unexpected any".
+// Interfaces para a resposta da API
 interface ForecastItem {
   dt: number;
   dt_txt: string;
@@ -22,7 +20,7 @@ interface ForecastItem {
     speed: number;
   };
   rain?: {
-    '3h'?: number;
+    "3h"?: number;
   };
 }
 
@@ -33,8 +31,8 @@ interface WeatherApiResponse {
     timezone: number;
   };
 }
-// ----------------------------------------------------------------
 
+// Interface para os nossos dados de clima processados
 interface WeatherInfo {
   name: string;
   max: number;
@@ -56,9 +54,11 @@ export default function Home() {
     { name: "Ijuí", state: "RS" },
     { name: "Vacaria", state: "RS" },
   ]);
-  
+
   const [dayOffset, setDayOffset] = useState("0");
-  const [weatherData, setWeatherData] = useState<{ [key: string]: WeatherInfo }>({});
+  const [weatherData, setWeatherData] = useState<{
+    [key: string]: WeatherInfo;
+  }>({});
   const [newCity, setNewCity] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -75,7 +75,9 @@ export default function Home() {
       for (const city of cities) {
         try {
           const geoRes = await fetch(
-            `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city.name)},${city.state},BR&limit=1&appid=${API_KEY}`
+            `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+              city.name
+            )},${city.state},BR&limit=1&appid=${API_KEY}`
           );
           const geoJson = await geoRes.json();
 
@@ -88,59 +90,89 @@ export default function Home() {
           const weatherRes = await fetch(
             `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`
           );
-          // Usamos a nossa nova interface para dar um tipo seguro à resposta
           const weatherJson: WeatherApiResponse = await weatherRes.json();
 
           if (weatherJson.cod !== "200") {
-             console.warn(`Dados de clima não encontrados para: ${city.name}. Resposta da API:`, weatherJson);
-             continue;
+            console.warn(
+              `Dados de clima não encontrados para: ${city.name}. Resposta da API:`,
+              weatherJson
+            );
+            continue;
           }
-          
+
           const timezoneOffset = weatherJson.city.timezone;
-          
-          const referenceDate = new Date((weatherJson.list[0].dt + timezoneOffset) * 1000);
-          const targetDate = new Date(referenceDate);
+
+          const now = new Date();
+          const nowUtc = now.getTime() + now.getTimezoneOffset() * 60000;
+          const cityLocalNow = new Date(nowUtc + timezoneOffset * 1000);
+
+          const targetDate = new Date(cityLocalNow);
           targetDate.setUTCDate(targetDate.getUTCDate() + parseInt(dayOffset));
-          const targetDateString = targetDate.toISOString().split('T')[0];
-          
-          // Agora, 'item' tem um tipo seguro (ForecastItem), não 'any'
-          const dayForecasts = weatherJson.list.filter((item: ForecastItem) => {
-            const forecastLocalDate = new Date((item.dt + timezoneOffset) * 1000);
-            return forecastLocalDate.toISOString().split('T')[0] === targetDateString;
-          });
+          const targetDateString = targetDate.toISOString().split("T")[0];
+
+          const dayForecasts = weatherJson.list.filter(
+            (item: ForecastItem) => {
+              const forecastLocalDate = new Date(
+                (item.dt + timezoneOffset) * 1000
+              );
+              return (
+                forecastLocalDate.toISOString().split("T")[0] === targetDateString
+              );
+            }
+          );
 
           if (dayForecasts.length === 0) {
-            console.warn(`Não há previsão disponível para ${city.name} na data selecionada.`);
+            results[`${city.name}, ${city.state}`] = {
+              name: `${city.name}, ${city.state}`,
+              max: 0,
+              min: 0,
+              rain: 0,
+              wind: 0,
+              code: 800,
+              rainHours: Array.from({ length: 24 }, (_, i) => ({
+                hour: i,
+                rain: 0,
+              })),
+            };
+            console.warn(
+              `Não há previsão disponível para ${city.name} na data selecionada.`
+            );
             continue;
           }
 
           let maxTemp = -Infinity;
           let minTemp = Infinity;
           let totalRain = 0;
-          
+
           const fullDayRain = Array.from({ length: 24 }, (_, i) => ({
             hour: i,
             rain: 0,
           }));
 
           for (const forecast of dayForecasts) {
-            if (forecast.main.temp_max > maxTemp) maxTemp = forecast.main.temp_max;
-            if (forecast.main.temp_min < minTemp) minTemp = forecast.main.temp_min;
-            
-            const rainAmount = forecast.rain?.['3h'] ?? 0;
-            if (rainAmount > 0) {
-              totalRain += rainAmount;
-              const forecastLocalDate = new Date((forecast.dt + timezoneOffset) * 1000);
-              const forecastHour = forecastLocalDate.getUTCHours();
-              
-              const hourIndex = fullDayRain.findIndex(h => h.hour === forecastHour);
-              if (hourIndex !== -1) {
-                fullDayRain[hourIndex].rain = rainAmount;
-              }
+            if (forecast.main.temp_max > maxTemp)
+              maxTemp = forecast.main.temp_max;
+            if (forecast.main.temp_min < minTemp)
+              minTemp = forecast.main.temp_min;
+
+            const rainAmount = forecast.rain?.["3h"] ?? 0;
+            totalRain += rainAmount;
+
+            const forecastLocalDate = new Date(
+              (forecast.dt + timezoneOffset) * 1000
+            );
+            const forecastHour = forecastLocalDate.getUTCHours();
+
+            const hourIndex = fullDayRain.findIndex(
+              (h) => h.hour === forecastHour
+            );
+            if (hourIndex !== -1) {
+              fullDayRain[hourIndex].rain = rainAmount;
             }
           }
-          
-          const representativeForecast = dayForecasts[Math.floor(dayForecasts.length / 2)];
+
+          const representativeForecast =
+            dayForecasts[Math.floor(dayForecasts.length / 2)];
 
           results[`${city.name}, ${city.state}`] = {
             name: `${city.name}, ${city.state}`,
@@ -152,7 +184,10 @@ export default function Home() {
             rainHours: fullDayRain,
           };
         } catch (e) {
-          console.error(`Erro detalhado ao buscar previsão para "${city.name}":`, e);
+          console.error(
+            `Erro detalhado ao buscar previsão para "${city.name}":`,
+            e
+          );
         }
       }
       setWeatherData(results);
@@ -161,7 +196,6 @@ export default function Home() {
     fetchWeather();
   }, [cities, dayOffset, API_KEY]);
 
-  // --- CORREÇÃO 2: Garantir que 'setCities' é utilizada ---
   function addCity() {
     if (!newCity.trim()) return;
     const cityKey = newCity.trim().toLowerCase();
@@ -174,14 +208,11 @@ export default function Home() {
     setErrorMsg("");
   }
 
-  // --- CORREÇÃO 3: Garantir que 'cityName' é utilizada ---
   function removeCity(cityName: string) {
-    const pureCityName = cityName.split(',')[0];
-    // A função setCities é utilizada aqui
+    const pureCityName = cityName.split(",")[0];
     setCities(cities.filter((c) => c.name !== pureCityName));
-    
+
     const newData = { ...weatherData };
-    // O parâmetro cityName é utilizado aqui
     delete newData[cityName];
     setWeatherData(newData);
   }
@@ -189,21 +220,22 @@ export default function Home() {
   return (
     <main>
       <div className="app-container">
-        <h1 className="title">Previsão do Tempo</h1>
-        <Controls 
+        <Controls
           dayOffset={dayOffset}
           onDayChange={setDayOffset}
           newCity={newCity}
           onNewCityChange={setNewCity}
           onAddCity={addCity}
         />
+
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
+
         <div className="cards">
           {Object.values(weatherData).map((city) => (
-            <WeatherCard 
-              key={city.name} 
-              city={city} 
-              onRemove={removeCity} 
+            <WeatherCard
+              key={city.name}
+              city={city}
+              onRemove={removeCity}
             />
           ))}
         </div>
