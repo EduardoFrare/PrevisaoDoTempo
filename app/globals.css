@@ -1,90 +1,275 @@
-/* --- CÓDIGO CSS - ABORDAGEM COM CARD LARGO --- */
+/* --- CÓDIGO CSS - COM CORES CENTRALIZADAS EM :ROOT --- */
 
 /* --- 1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS --- */
-*, *::before, *::after { box-sizing: border-box; }
-:root {
-  --background: #f0f4f8; --card-bg: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b; --accent-color: #3b82f6; --accent-color-hover: #2563eb; --success-color: #16a34a; --success-color-hover: #15803d; --danger-color: #ef4444; --danger-color-hover: #dc2626; --border-color: #e2e8f0; --chart-bar-bg: rgba(59, 130, 246, 0.1);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
-body { background-color: var(--background); color: var(--text-primary); margin: 0; padding: 20px; }
+:root {
+  /* Cores Principais */
+  --background: #f0f4f8;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  
+  /* Cores de Ação e Feedback */
+  --accent-color: #3b82f6;
+  --accent-color-hover: #2563eb;
+  --success-color: #16a34a;
+  --success-color-hover: #15803d;
+  --danger-color: #ef4444;
+  --danger-color-hover: #dc2626;
+  
+  /* ADIÇÃO: Outras cores e sombras */
+  --white: #ffffff;
+  --focus-ring-color: rgba(59, 130, 246, 0.2);
+  --shadow-color-subtle: rgba(0, 0, 0, 0.05);
+  --shadow-color-light: rgba(0, 0, 0, 0.08);
+}
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 20px;
+  padding-top: 40px;
+}
 
 /* --- 2. LAYOUT PRINCIPAL E CONTROLES --- */
-.app-container { max-width: 1200px; margin: auto; } /* Aumentei um pouco o max-width para acomodar melhor os cards largos */
-.title { font-size: 2.25rem; font-weight: 700; text-align: center; color: var(--text-primary); margin-bottom: 30px; }
-.controls { display: flex; gap: 12px; margin-bottom: 20px; justify-content: center; align-items: center; flex-wrap: wrap; padding: 16px; background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid var(--border-color); }
-.day-select, .city-input { padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 14px; transition: all 0.2s ease-in-out; background-color: var(--background); }
-.city-input { width: 220px; }
-.city-input:focus, .day-select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
-.add-btn, .remove-btn { padding: 10px 16px; border-radius: 8px; color: white; cursor: pointer; border: none; font-weight: 500; transition: all 0.2s ease-in-out; }
-.add-btn { background-color: var(--success-color); }
-.add-btn:hover { background-color: var(--success-color-hover); transform: translateY(-2px); }
-.error-msg { color: var(--danger-color); margin-bottom: 15px; text-align: center; font-weight: 500; }
+.app-container {
+  max-width: 1400px;
+  margin: auto;
+}
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 16px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 6px 20px var(--shadow-color-light); /* USO */
+}
+.day-select,
+.city-input {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--background);
+}
+.city-input {
+  width: 220px;
+}
+.city-input:focus,
+.day-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--focus-ring-color); /* USO */
+}
+.add-btn,
+.remove-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: var(--white); /* USO */
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+.add-btn {
+  background-color: var(--success-color);
+}
+.add-btn:hover {
+  background-color: var(--success-color-hover);
+}
+.error-msg {
+  color: var(--danger-color);
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+}
 
-/* --- 3. CARDS DE PREVISÃO (COM LARGURA AUMENTADA) --- */
+/* --- 3. CARDS DE PREVISÃO --- */
 .cards {
   display: grid;
-  /* A MUDANÇA PRINCIPAL ESTÁ AQUI: a largura mínima de cada card agora é 550px */
-  grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
   gap: 20px;
   align-items: start;
+  grid-template-columns: 1fr;
 }
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .weather-card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px var(--shadow-color-subtle); /* USO */
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
-.weather-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); }
 
-.card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 12px 20px; border-bottom: 1px solid var(--border-color); }
-.city-name { font-size: 1.25rem; font-weight: 700; }
-.city-name span { font-size: 1.5rem; margin-left: 8px; vertical-align: middle; }
-.remove-btn { background-color: var(--danger-color); padding: 6px 12px; font-size: 12px; }
-.remove-btn:hover { background-color: var(--danger-color-hover); }
+.weather-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px var(--shadow-color-light); /* USO */
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 12px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+.city-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.city-name span {
+  font-size: 1.5rem;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.remove-btn {
+  background-color: var(--danger-color);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.remove-btn:hover {
+  background-color: var(--danger-color-hover);
+}
+.card-body {
+  padding: 0 20px;
+}
+.card-body p {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
 
-.card-body { padding: 0 20px; }
-.card-body p { margin: 10px 0; display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
-
-/* --- 4. GRÁFICO DE BARRAS DE CHUVA (SEM ROLAGEM) --- */
+/* --- 4. GRÁFICO DE BARRAS DE CHUVA --- */
 .rain-hours {
-  padding: 10px 20px 20px 20px; /* Padding padrão */
+  padding: 10px 20px 20px 20px;
 }
-.rain-title { font-weight: 500; color: var(--text-primary); margin-bottom: 12px; border-top: 1px solid var(--border-color); padding-top: 16px; }
+.rain-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+}
+
 .rain-chart {
   background-color: var(--background);
   border-radius: 12px;
   padding: 12px;
-  display: grid;
-  grid-template-columns: repeat(24, 1fr);
+  display: flex;
   gap: 2px;
   height: 120px;
   align-items: flex-end;
-  /* Não precisamos mais de min-width ou margens aqui */
-}
-.chart-bar-item { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; height: 100%; }
-.bar-container { width: 100%; height: 100%; display: flex; align-items: flex-end; border-radius: 4px; overflow: hidden; }
-.bar { width: 100%; background-color: var(--accent-color); border-radius: 4px 4px 0 0; transition: height 0.4s ease-out, background-color 0.2s; }
-.chart-bar-item:hover .bar { background-color: var(--accent-color-hover); }
-.chart-bar-item .label-rain { visibility: hidden; opacity: 0; position: absolute; top: -25px; background-color: var(--text-primary); color: white; padding: 3px 7px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; white-space: nowrap; transition: opacity 0.2s; z-index: 10; }
-.chart-bar-item:hover .label-rain { visibility: visible; opacity: 1; }
-.label-hour { 
-  font-size: 0.7rem; 
-  font-weight: 500; 
-  color: var(--text-secondary); 
-  margin-top: 6px; 
-  flex-shrink: 0; 
-  visibility: hidden; 
-}
-.chart-bar-item:nth-child(3n + 1) .label-hour { 
-  visibility: visible; 
+  width: 100%;
 }
 
+.chart-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  height: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+.bar-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar {
+  width: 100%;
+  background-color: var(--accent-color);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.4s ease-out, background-color 0.2s;
+}
+.chart-bar-item:hover .bar {
+  background-color: var(--accent-color-hover);
+}
+.chart-bar-item .label-rain {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: -25px;
+  background-color: var(--text-primary);
+  color: var(--white); /* USO */
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+.chart-bar-item:hover .label-rain {
+  visibility: visible;
+  opacity: 1;
+}
+.label-hour {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  flex-shrink: 0;
+  visibility: hidden;
+}
+.chart-bar-item:nth-child(3n + 1) .label-hour {
+  visibility: visible;
+}
 
 /* --- 5. MODO ESCURO --- */
 @media (prefers-color-scheme: dark) {
-  :root { --background: #0f172a; --card-bg: #1e293b; --text-primary: #f1f5f9; --text-secondary: #94a3b8; --border-color: #334155; }
-  .day-select, .city-input { background-color: #334155; color: var(--text-primary); }
-  .chart-bar-item .label-rain { color: var(--background); background-color: var(--text-primary); }
-  .rain-chart { background-color: #020617; }
+  :root {
+    /* Cores Principais (Dark) */
+    --background: #0f172a;
+    --card-bg: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    
+    /* ADIÇÃO: Outras cores e sombras (Dark) */
+    --rain-chart-bg-dark: #020617;
+    --shadow-color-light: rgba(0, 0, 0, 0.2);
+    --shadow-color-subtle: rgba(0, 0, 0, 0.15);
+  }
+  .day-select,
+  .city-input {
+    background-color: var(--border-color); /* USO */
+    color: var(--text-primary);
+  }
+  .chart-bar-item .label-rain {
+    color: var(--background);
+    background-color: var(--text-primary);
+  }
+  .rain-chart {
+    background-color: var(--rain-chart-bg-dark); /* USO */
+  }
 }
