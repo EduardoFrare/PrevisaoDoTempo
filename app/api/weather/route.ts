@@ -1,9 +1,12 @@
+// app/api/weather/route.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { WeatherApiResponse, WeatherInfo, ForecastItem } from "@/types/weather";
+import { redis } from '@/lib/redis';
 
-// Lembre-se de renomear a variável no seu arquivo .env.local de NEXT_PUBLIC_OPENWEATHER_API_KEY para OPENWEATHER_API_KEY
 const API_KEY = process.env.OPENWEATHER_API_KEY;
+// Cache de 30 minutos em segundos (30 * 60 = 1800)
+const CACHE_TTL_SECONDS = 1800;
 
 export async function GET(request: NextRequest) {
   if (!API_KEY) {
@@ -15,29 +18,39 @@ export async function GET(request: NextRequest) {
   const state = searchParams.get('state');
   const dayOffset = searchParams.get('dayOffset') || '0';
 
-  if (!city) {
-    return NextResponse.json({ error: 'Nome da cidade é obrigatório.' }, { status: 400 });
+  if (!city || !state) {
+    return NextResponse.json({ error: 'Cidade e estado são obrigatórios.' }, { status: 400 });
   }
 
+  // Chave padronizada para o cache
+  const cacheKey = `weather:${city.toLowerCase().replace(/\s+/g, '-')}:${state.toLowerCase()}:${dayOffset}`;
+
   try {
-    // 1. Obter geolocalização
+    // 1. Tenta buscar do cache
+    const cachedData = await redis.get<WeatherInfo>(cacheKey);
+    if (cachedData) {
+      console.log(`[CACHE HIT] Retornando dados para ${city}, ${state}`);
+      return NextResponse.json(cachedData);
+    }
+
+    console.log(`[CACHE MISS] Buscando dados para ${city}, ${state}`);
+
+    // 2. Se não encontrou, busca na API externa
     const geoRes = await fetch(
       `https://api.openweathermap.org/geo/1.0/direct?q=${city},${state},BR&limit=1&appid=${API_KEY}`
     );
     const geoJson = await geoRes.json();
     if (!geoJson || geoJson.length === 0) {
-      throw new Error(`Geolocalização não encontrada para ${city}`);
+      throw new Error(`Geolocalização não encontrada para ${city}, ${state}`);
     }
     const { lat, lon } = geoJson[0];
     
-    // 2. Buscar previsão com cache de 1 hora
     const weatherRes = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`,
-      { next: { revalidate: 3600 } } 
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`
     );
     const weatherJson: WeatherApiResponse = await weatherRes.json();
     
-    // 3. PROCESSAR OS DADOS (A LÓGICA QUE FALTAVA)
+    // 3. Processa os dados (lógica original do seu projeto)
     const timezoneOffset = weatherJson.city.timezone;
     const now = new Date();
     const nowUtc = now.getTime() + now.getTimezoneOffset() * 60000;
@@ -62,8 +75,8 @@ export async function GET(request: NextRequest) {
     const fullDayRain = Array.from({ length: 24 }, (_, i) => ({ hour: i, rain: 0 }));
 
     for (const forecast of dayForecasts) {
-      if (forecast.main.temp_max > maxTemp) maxTemp = forecast.main.temp_max;
-      if (forecast.main.temp_min < minTemp) minTemp = forecast.main.temp_min;
+      maxTemp = Math.max(maxTemp, forecast.main.temp_max);
+      minTemp = Math.min(minTemp, forecast.main.temp_min);
       const rainAmount = forecast.rain?.["3h"] ?? 0;
       totalRain += rainAmount;
       const forecastLocalDate = new Date((forecast.dt + timezoneOffset) * 1000);
@@ -86,12 +99,13 @@ export async function GET(request: NextRequest) {
       rainHours: fullDayRain,
     };
 
-    // Retorna os dados já processados e no formato correto
+    // 4. Salva o resultado no cache antes de retornar
+    await redis.set(cacheKey, processedData, { ex: CACHE_TTL_SECONDS });
+
     return NextResponse.json(processedData);
 
   } catch (error) {
     console.error(`Erro no backend para a cidade ${city}:`, error);
-    // Retornamos um objeto com uma flag de erro para o frontend lidar
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
