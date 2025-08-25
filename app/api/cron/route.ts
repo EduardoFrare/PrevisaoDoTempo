@@ -37,6 +37,6 @@ export async function GET(request: Request) {
 
   } catch (error) {
     console.error('[CRON] Erro geral no job:', error);
-    return NextResponse.json({ success: false, message: 'Erro interno ao executar o cron job.' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Erro interno ao executar o cron job...' }, { status: 500 });
   }
 }
