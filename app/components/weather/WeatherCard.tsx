@@ -1,33 +1,25 @@
-// app/components/WeatherCard.tsx
 "use client";
 
 import RainChart from "./RainChart";
+import type { WeatherInfo } from "@/types/weather"; // CAMINHO ATUALIZADO
 
-interface WeatherInfo {
-  name: string;
-  max: number;
-  min: number;
-  rain: number;
-  wind: number;
-  code: number;
-  rainHours: { hour: number; rain: number }[];
-}
-
+// Interface para as propriedades que o WeatherCard recebe
 interface WeatherCardProps {
   city: WeatherInfo;
   onRemove: (cityName: string) => void;
 }
 
+// Função auxiliar para obter o ícone do clima
 function getWeatherIcon(code: number) {
-  if (code >= 200 && code < 300) return "⛈️";
-  if (code >= 300 && code < 400) return "💧";
-  if (code >= 500 && code < 600) return "🌧️";
-  if (code >= 600 && code < 700) return "❄️";
-  if (code >= 700 && code < 800) return "🌫️";
-  if (code === 800) return "☀️";
-  if (code === 801 || code === 802) return "🌤️";
-  if (code === 803 || code === 804) return "☁️";
-  return "❔";
+    if (code >= 200 && code < 300) return "⛈️";
+    if (code >= 300 && code < 400) return "💧";
+    if (code >= 500 && code < 600) return "🌧️";
+    if (code >= 600 && code < 700) return "❄️";
+    if (code >= 700 && code < 800) return "🌫️";
+    if (code === 800) return "☀️";
+    if (code === 801 || code === 802) return "🌤️";
+    if (code === 803 || code === 804) return "☁️";
+    return "❔";
 }
 
 export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
@@ -51,10 +43,9 @@ export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
         <p>💨 Vento médio: {city.wind} km/h</p>
       </div>
       
-      {/* ALTERAÇÃO AQUI: Envolvemos o RainChart em uma div com a classe que aplica o padding */}
       {city.rainHours.length > 0 && (
-        <div className="rain-hours">
-          <RainChart rainHours={city.rainHours} />
+         <div className="rain-hours">
+            <RainChart rainHours={city.rainHours} />
         </div>
       )}
     </div>
