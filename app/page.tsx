@@ -67,7 +67,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchWeather() {
       if (!API_KEY) {
-        setErrorMsg("Chave da API não configurada!");
+        setErrorMsg("Não foi possível comunicar com a API");
         return;
       }
 

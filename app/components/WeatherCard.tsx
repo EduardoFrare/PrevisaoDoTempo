@@ -1,9 +1,8 @@
 // app/components/WeatherCard.tsx
 "use client";
 
-import RainChart from "./RainChart"; // Importando o nosso novo componente de gráfico
+import RainChart from "./RainChart";
 
-// Interface para os dados do clima de uma cidade
 interface WeatherInfo {
   name: string;
   max: number;
@@ -14,24 +13,21 @@ interface WeatherInfo {
   rainHours: { hour: number; rain: number }[];
 }
 
-// Interface para as propriedades que o WeatherCard recebe
 interface WeatherCardProps {
   city: WeatherInfo;
   onRemove: (cityName: string) => void;
 }
 
-// Função auxiliar para obter o ícone do clima
 function getWeatherIcon(code: number) {
-    // Mapeamento para os códigos da OpenWeatherMap
-    if (code >= 200 && code < 300) return "⛈️"; // Trovoada
-    if (code >= 300 && code < 400) return "💧"; // Chuvisco (Drizzle)
-    if (code >= 500 && code < 600) return "🌧️"; // Chuva
-    if (code >= 600 && code < 700) return "❄️"; // Neve
-    if (code >= 700 && code < 800) return "🌫️"; // Névoa, Fumaça, etc.
-    if (code === 800) return "☀️"; // Céu Limpo
-    if (code === 801 || code === 802) return "🌤️"; // Poucas Nuvens
-    if (code === 803 || code === 804) return "☁️"; // Nublado
-    return "❔";
+  if (code >= 200 && code < 300) return "⛈️";
+  if (code >= 300 && code < 400) return "💧";
+  if (code >= 500 && code < 600) return "🌧️";
+  if (code >= 600 && code < 700) return "❄️";
+  if (code >= 700 && code < 800) return "🌫️";
+  if (code === 800) return "☀️";
+  if (code === 801 || code === 802) return "🌤️";
+  if (code === 803 || code === 804) return "☁️";
+  return "❔";
 }
 
 export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
@@ -55,7 +51,12 @@ export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
         <p>💨 Vento médio: {city.wind} km/h</p>
       </div>
       
-      {city.rainHours.length > 0 && <RainChart rainHours={city.rainHours} />}
+      {/* ALTERAÇÃO AQUI: Envolvemos o RainChart em uma div com a classe que aplica o padding */}
+      {city.rainHours.length > 0 && (
+        <div className="rain-hours">
+          <RainChart rainHours={city.rainHours} />
+        </div>
+      )}
     </div>
   );
 }
