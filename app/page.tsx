@@ -7,6 +7,8 @@ import { INITIAL_CITIES } from "@/constants";
 // ALTERAÇÃO AQUI: O caminho foi simplificado para apontar apenas para a pasta.
 import { fetchProcessedWeatherData } from "@/services"; 
 import type { WeatherInfo } from "@/types/weather";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 export default function Home() {
   const [cities, setCities] = useState(INITIAL_CITIES);
