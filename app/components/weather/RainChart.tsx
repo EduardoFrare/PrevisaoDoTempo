@@ -1,7 +1,7 @@
-// app/components/RainChart.tsx
+// app/components/weather/RainChart.tsx
 "use client";
 
-import React from 'react'; // É uma boa prática importar React para usar Fragments
+import React from 'react';
 
 interface RainHour {
   hour: number;
@@ -15,15 +15,17 @@ interface RainChartProps {
 export default function RainChart({ rainHours }: RainChartProps) {
   const maxRain = Math.max(...rainHours.map(h => h.rain), 1);
 
-  // ALTERAÇÃO AQUI: Removemos a div externa com a classe "rain-hours"
-  // e usamos um Fragment (<>...</>) para agrupar os elementos.
   return (
     <>
       <p className="rain-title">💧 Precipitação por Hora (mm)</p>
       <div className="rain-chart">
         {rainHours.map(({ hour, rain }) => (
           <div key={hour} className="chart-bar-item">
-            <span className="label-rain">{(rain ?? 0).toFixed(1)}</span>
+            <span className="label-rain">
+              {String(hour).padStart(2, '0')}:00
+              <br />
+              {(rain ?? 0).toFixed(1)} mm
+            </span>
             <div className="bar-container">
               <div
                 className="bar"

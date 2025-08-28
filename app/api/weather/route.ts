@@ -56,12 +56,23 @@ async function fetchAndProcessWeatherData(city: string, state: string, dayOffset
     for (const forecast of dayForecasts) {
       maxTemp = Math.max(maxTemp, forecast.main.temp_max);
       minTemp = Math.min(minTemp, forecast.main.temp_min);
-      const rainAmount = forecast.rain?.["3h"] ?? 0;
-      totalRain += rainAmount;
+      const rainAmount3h = forecast.rain?.["3h"] ?? 0;
+      totalRain += rainAmount3h;
+      
       const forecastLocalDate = new Date((forecast.dt + timezoneOffset) * 1000);
       const forecastHour = forecastLocalDate.getUTCHours();
-      const hourIndex = fullDayRain.findIndex((h) => h.hour === forecastHour);
-      if (hourIndex !== -1) fullDayRain[hourIndex].rain = rainAmount;
+      
+      // Distribui a chuva de 3 horas pela média de 1 hora
+      const hourlyRain = rainAmount3h / 3;
+
+      for (let i = 0; i < 3; i++) {
+        const currentHour = (forecastHour + i) % 24;
+        const hourIndex = fullDayRain.findIndex((h) => h.hour === currentHour);
+        if (hourIndex !== -1) {
+          // Atribui o valor de chuva para cada uma das 3 horas
+          fullDayRain[hourIndex].rain = hourlyRain;
+        }
+      }
     }
 
     const representativeForecast = dayForecasts[Math.floor(dayForecasts.length / 2)];

@@ -1,3 +1,5 @@
+/* app/globals.css */
+
 /* --- CÓDIGO CSS - COM CORES CENTRALIZADAS EM :ROOT --- */
 
 /* --- 1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS --- */
@@ -218,16 +220,21 @@ body {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  top: -25px;
+  top: -42px; /* Aumenta a distância para não sobrepor a barra */
+  left: 50%; /* Centraliza horizontalmente */
+  transform: translateX(-50%); /* Ajuste fino da centralização */
   background-color: var(--text-primary);
-  color: var(--white); /* USO */
-  padding: 3px 7px;
-  border-radius: 4px;
+  color: var(--white);
+  padding: 5px 8px; /* Um pouco mais de espaço interno */
+  border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 500;
-  white-space: nowrap;
+  line-height: 1.4; /* Melhora o espaçamento entre as linhas */
+  text-align: center; /* Garante que o texto fique centralizado */
+  white-space: nowrap; /* Impede que o texto quebre em telas pequenas */
   transition: opacity 0.2s;
   z-index: 10;
+  pointer-events: none; /* Impede que o tooltip bloqueie o hover */
 }
 .chart-bar-item:hover .label-rain {
   visibility: visible;
@@ -272,4 +279,7 @@ body {
   .rain-chart {
     background-color: var(--rain-chart-bg-dark); /* USO */
   }
+
+
+  
 }
