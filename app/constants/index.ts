@@ -7,4 +7,7 @@ export const INITIAL_CITIES = [
   { name: "Lages", state: "SC" },
   { name: "Ijuí", state: "RS" },
   { name: "Vacaria", state: "RS" },
+  { name: "Santa Rosa", state: "RS" },
+  { name: "Concórdia", state: "SC" },
+  { name: "Joaçaba", state: "SC" },
 ];

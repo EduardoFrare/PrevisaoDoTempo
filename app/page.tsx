@@ -3,12 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Controls from "./components/weather/Controls";
 import WeatherCard from "./components/weather/WeatherCard";
+import LoadingIndicator from "./components/LoadingIndicator"; // Certifique-se de que este componente existe e está importado
 import { INITIAL_CITIES } from "@/constants";
-// ALTERAÇÃO AQUI: O caminho foi simplificado para apontar apenas para a pasta.
-import { fetchProcessedWeatherData } from "@/services"; 
+import { fetchProcessedWeatherData } from "@/services";
 import type { WeatherInfo } from "@/types/weather";
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/next"
 
 export default function Home() {
   const [cities, setCities] = useState(INITIAL_CITIES);
@@ -38,16 +36,13 @@ export default function Home() {
 
   function addCity() {
     if (!newCity.trim()) return;
-
     const [cityName, state] = newCity.split(",").map(s => s.trim());
     if (!cityName) return;
-
     const cityKey = cityName.toLowerCase();
     if (cities.some((c) => c.name.toLowerCase() === cityKey)) {
       setErrorMsg("Cidade já adicionada!");
       return;
     }
-    
     setCities([...cities, { name: cityName, state: state || "" }]);
     setNewCity("");
     setErrorMsg("");
@@ -71,8 +66,9 @@ export default function Home() {
 
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
 
+        {/* --- LÓGICA CORRIGIDA AQUI --- */}
         {isLoading ? (
-          <p style={{ textAlign: 'center' }}>Carregando dados do clima...</p>
+          <LoadingIndicator />
         ) : (
           <div className="cards">
             {Object.values(weatherData).map((city) => (
