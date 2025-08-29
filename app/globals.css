@@ -77,8 +77,7 @@ body {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 3px var(--focus-ring-color);
 }
-.add-btn,
-.remove-btn {
+.add-btn{
   padding: 10px 16px;
   border-radius: 8px;
   color: var(--white);
@@ -150,14 +149,7 @@ body {
   margin-left: 8px;
   vertical-align: middle;
 }
-.remove-btn {
-  background-color: var(--danger-color);
-  padding: 6px 12px;
-  font-size: 12px;
-}
-.remove-btn:hover {
-  background-color: var(--danger-color-hover);
-}
+
 .card-body {
   padding: 0 20px;
 }
@@ -271,6 +263,18 @@ body {
   font-size: 4rem;
   animation: bounce 1.5s infinite ease-in-out;
   margin-bottom: 1rem;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  position: middle;
+  font-size: 24px;
+  transform: translateY(-50%);
+}
+.remove-btn:hover {
+  background-color: var(--danger-color-hover);
 }
 
 /* --- BARRA SUPERIOR E NOVO LAYOUT --- */
