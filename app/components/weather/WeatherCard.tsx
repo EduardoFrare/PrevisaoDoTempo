@@ -27,9 +27,7 @@ export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
   return (
     <div className="weather-card">
       <div className="card-header">
-        <h2 className="city-name">
-          {city.name} <span>{getWeatherIcon(city.code)}</span>
-        </h2>
+        <h2 className="city-name">{city.name}<span className="weather-icon">{getWeatherIcon(city.code)}</span></h2>
         <button onClick={() => onRemove(city.name)} className="remove-btn"><FiX /></button>
       </div>
 
@@ -41,6 +39,7 @@ export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
       
       {city.rainHours.length > 0 && (
          <div className="rain-hours">
+            <p className="rain-title">💧 Precipitação por Hora (mm)</p>
             <RainChart rainHours={city.rainHours} />
         </div>
       )}

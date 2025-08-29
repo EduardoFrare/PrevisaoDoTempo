@@ -17,7 +17,6 @@ export default function RainChart({ rainHours }: RainChartProps) {
 
   return (
     <>
-      <p className="rain-title">💧 Precipitação por Hora (mm)</p>
       <div className="rain-chart">
         {rainHours.map(({ hour, rain }) => (
           <div key={hour} className="chart-bar-item">
