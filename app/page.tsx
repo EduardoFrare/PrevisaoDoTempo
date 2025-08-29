@@ -18,6 +18,7 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isPanelOpen, setIsPanelOpen] = useState(false); // Novo estado para o painel
+  const [areAllChartsOpen, setAreAllChartsOpen] = useState(false);
 
   useEffect(() => {
     async function fetchWeather() {
@@ -60,6 +61,10 @@ export default function Home() {
     const [cityName] = cityNameWithState.split(",");
     setCities(cities.filter((c) => c.name.toLowerCase() !== cityName.toLowerCase()));
   }
+  
+  function toggleAllCharts() {
+    setAreAllChartsOpen(!areAllChartsOpen);
+  }
 
   return (
     <main>
@@ -69,6 +74,8 @@ export default function Home() {
         onDayChange={setDayOffset}
         onTogglePanel={() => setIsPanelOpen(!isPanelOpen)} // Função para abrir/fechar
         isPanelOpen={isPanelOpen}
+        onToggleAllCharts={toggleAllCharts}
+        areAllChartsOpen={areAllChartsOpen}
       />
       
       {/* O AddCityPanel aparece e desaparece */}
@@ -91,6 +98,7 @@ export default function Home() {
                 key={city.name}
                 city={city}
                 onRemove={removeCity}
+                isAllChartsOpen={areAllChartsOpen}
               />
             ))}
           </div>

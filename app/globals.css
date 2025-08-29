@@ -166,13 +166,25 @@ body {
 
 /* --- 4. GRÁFICO DE BARRAS DE CHUVA --- */
 
-.rain-title {
-  margin: 0;
-  padding: 10px 0;
-  font-weight: 500;
+.rain-title-button {
+  background: none;
+  border: none;
   color: var(--text-primary);
+  cursor: pointer;
+  padding: 10px 0;
+  width: 100%;
+  font-weight: 500;
   border-top: 1px solid var(--border-color);
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.rain-title-button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .rain-chart {
@@ -184,6 +196,18 @@ body {
   height: 120px;
   align-items: flex-end;
   width: 100%;
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .chart-bar-item {
@@ -324,7 +348,9 @@ body {
   margin: 0 auto;
 }
 
-.day-selector button {
+/* --- ESTILOS UNIFICADOS PARA BOTÕES DO CABEÇALHO --- */
+.day-selector button,
+.toggle-all-charts-btn {
   background-color: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
@@ -333,11 +359,16 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.day-selector button:hover {
+.day-selector button:hover,
+.toggle-all-charts-btn:hover {
   background-color: var(--background);
   border-color: var(--accent-color);
+  color: var(--text-primary);
 }
 
 .day-selector button.active {
@@ -345,6 +376,14 @@ body {
   color: var(--white);
   border-color: var(--accent-color);
 }
+
+.toggle-all-charts-btn {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* --- FIM DOS ESTILOS UNIFICADOS --- */
 
 /* --- PAINEL DE ADICIONAR CIDADE --- */
 .add-city-panel {

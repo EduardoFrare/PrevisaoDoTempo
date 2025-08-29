@@ -1,16 +1,16 @@
 "use client";
 
 import RainChart from "./RainChart";
-import type { WeatherInfo } from "@/types/weather"; // CAMINHO ATUALIZADO
-import { FiX } from 'react-icons/fi';
+import type { WeatherInfo } from "@/types/weather";
+import { FiX, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
 
-// Interface para as propriedades que o WeatherCard recebe
 interface WeatherCardProps {
   city: WeatherInfo;
   onRemove: (cityName: string) => void;
+  isAllChartsOpen: boolean;
 }
 
-// Função auxiliar para obter o ícone do clima
 function getWeatherIcon(code: number) {
     if (code >= 200 && code < 300) return "⛈️";
     if (code >= 300 && code < 400) return "💧";
@@ -23,7 +23,13 @@ function getWeatherIcon(code: number) {
     return "❔";
 }
 
-export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
+export default function WeatherCard({ city, onRemove, isAllChartsOpen }: WeatherCardProps) {
+  const [isChartVisible, setIsChartVisible] = useState(false);
+  
+  useEffect(() => {
+    setIsChartVisible(isAllChartsOpen);
+  }, [isAllChartsOpen]);
+
   return (
     <div className="weather-card">
       <div className="card-header">
@@ -39,8 +45,11 @@ export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
       
       {city.rainHours.length > 0 && (
          <div className="rain-hours">
-            <p className="rain-title">💧 Precipitação por Hora (mm)</p>
-            <RainChart rainHours={city.rainHours} />
+            <button className="rain-title-button" onClick={() => setIsChartVisible(!isChartVisible)}>
+              💧 Precipitação por Hora (mm)
+              {isChartVisible ? <FiChevronUp /> : <FiChevronDown />}
+            </button>
+            {isChartVisible && <RainChart rainHours={city.rainHours} />}
         </div>
       )}
     </div>
