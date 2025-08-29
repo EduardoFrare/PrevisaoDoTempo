@@ -270,6 +270,112 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Adicione este código ao final de app/globals.css */
+
+/* --- BARRA SUPERIOR E NOVO LAYOUT --- */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 10px var(--shadow-color-light);
+  z-index: 1000;
+  height: 60px;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day-selector {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto; /* Centraliza os botões */
+}
+
+.day-selector button {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.day-selector button:hover {
+  background-color: var(--background);
+  border-color: var(--accent-color);
+}
+
+.day-selector button.active {
+  background-color: var(--accent-color);
+  color: var(--white);
+  border-color: var(--accent-color);
+}
+
+/* --- PAINEL DE ADICIONAR CIDADE --- */
+.add-city-panel {
+  background-color: var(--card-bg);
+  padding: 20px;
+  position: fixed;
+  top: 60px; /* Abaixo do header */
+  left: 0;
+  right: 0;
+  z-index: 999;
+  transform: translateY(-150%);
+  transition: transform 0.3s ease-in-out;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.add-city-panel.open {
+  transform: translateY(0);
+}
+
+.add-city-panel .input-group {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.add-city-panel .city-input {
+  flex-grow: 1; /* Faz o input ocupar o espaço disponível */
+}
+
+.error-msg-panel {
+  color: var(--danger-color);
+  text-align: center;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+/* --- AJUSTES NO CONTAINER PRINCIPAL --- */
+main {
+  padding-top: 60px; /* Espaço para o header fixo */
+}
+
+.app-container {
+  padding: 20px;
+  transition: padding-top 0.3s ease-in-out;
+}
+
+.app-container.panel-open {
+  padding-top: 150px; /* Aumenta o padding quando o painel está aberto */
+}
+
 /* --- 5. MODO ESCURO --- */
 @media (prefers-color-scheme: dark) {
   :root {
