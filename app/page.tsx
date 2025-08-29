@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// Correção: Importando 'Controls' como um membro nomeado do caminho correto
-import { Controls } from "./components/weather/Controls";
+// Vamos criar um novo componente HeaderBar e AddCityPanel a partir do Controls
+import { HeaderBar } from "./components/controls/HeaderBar";
+import { AddCityPanel } from "./components/controls/AddCityPanel";
 import WeatherCard from "./components/weather/WeatherCard";
 import LoadingIndicator from "./components/LoadingIndicator";
 import { INITIAL_CITIES } from "@/constants";
@@ -16,6 +17,7 @@ export default function Home() {
   const [newCity, setNewCity] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isPanelOpen, setIsPanelOpen] = useState(false); // Novo estado para o painel
 
   useEffect(() => {
     async function fetchWeather() {
@@ -32,40 +34,28 @@ export default function Home() {
         setIsLoading(false);
       }
     }
-
-    if (cities.length > 0) {
-      fetchWeather();
-    } else {
-      setIsLoading(false); // Se não houver cidades, não há o que carregar
-    }
+    if (cities.length > 0) fetchWeather();
+    else setIsLoading(false);
   }, [cities, dayOffset]);
 
-  // Função para adicionar cidade, com validação
   function addCity() {
     if (!newCity.trim()) return;
-
-    // Regex para validar o formato "Cidade, UF"
     const cityRegex = /^[a-zA-Z\u00C0-\u017F\s]+,\s*[A-Z]{2}$/;
     if (!cityRegex.test(newCity)) {
-      setErrorMsg('Formato inválido. Use: Cidade, UF (ex: Chapecó, SC)');
+      setErrorMsg('Formato inválido. Use: Cidade, UF');
       return;
     }
-    
     const [cityName, state] = newCity.split(",").map(s => s.trim());
-    
-    // Verifica se a cidade já foi adicionada
     if (cities.some((c) => c.name.toLowerCase() === cityName.toLowerCase() && c.state.toLowerCase() === state.toLowerCase())) {
       setErrorMsg("Essa cidade já está na lista!");
       return;
     }
-
-    // Atualiza o estado das cidades, o que vai disparar o useEffect para buscar o clima
     setCities([...cities, { name: cityName, state: state }]);
-    setNewCity(""); // Limpa o input
-    setErrorMsg(""); // Limpa mensagens de erro
+    setNewCity("");
+    setErrorMsg("");
+    setIsPanelOpen(false); // Fecha o painel após adicionar
   }
 
-  // Função para remover a cidade
   function removeCity(cityNameWithState: string) {
     const [cityName] = cityNameWithState.split(",");
     setCities(cities.filter((c) => c.name.toLowerCase() !== cityName.toLowerCase()));
@@ -73,18 +63,25 @@ export default function Home() {
 
   return (
     <main>
-      <div className="app-container">
-        {/* Passando as funções e estados corretos para o componente Controls */}
-        <Controls
-          dayOffset={dayOffset}
-          onDayChange={setDayOffset}
-          newCity={newCity}
-          onNewCityChange={setNewCity}
-          onAddCity={addCity}
-        />
+      {/* O HeaderBar fica fixo no topo */}
+      <HeaderBar
+        dayOffset={dayOffset}
+        onDayChange={setDayOffset}
+        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)} // Função para abrir/fechar
+        isPanelOpen={isPanelOpen}
+      />
+      
+      {/* O AddCityPanel aparece e desaparece */}
+      <AddCityPanel
+        isOpen={isPanelOpen}
+        newCity={newCity}
+        onNewCityChange={setNewCity}
+        onAddCity={addCity}
+        errorMsg={errorMsg}
+      />
 
-        {errorMsg && <p className="error-msg">{errorMsg}</p>}
-
+      {/* Container principal que se ajusta quando o painel está aberto */}
+      <div className={`app-container ${isPanelOpen ? 'panel-open' : ''}`}>
         {isLoading ? (
           <LoadingIndicator />
         ) : (

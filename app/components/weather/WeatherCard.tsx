@@ -2,6 +2,7 @@
 
 import RainChart from "./RainChart";
 import type { WeatherInfo } from "@/types/weather"; // CAMINHO ATUALIZADO
+import { FiX } from 'react-icons/fi';
 
 // Interface para as propriedades que o WeatherCard recebe
 interface WeatherCardProps {
@@ -29,12 +30,7 @@ export default function WeatherCard({ city, onRemove }: WeatherCardProps) {
         <h2 className="city-name">
           {city.name} <span>{getWeatherIcon(city.code)}</span>
         </h2>
-        <button
-          onClick={() => onRemove(city.name)}
-          className="remove-btn"
-        >
-          Remover
-        </button>
+        <button onClick={() => onRemove(city.name)} className="remove-btn"><FiX /></button>
       </div>
 
       <div className="card-body">
