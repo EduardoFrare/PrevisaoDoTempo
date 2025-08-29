@@ -266,15 +266,19 @@ body {
 }
 
 .remove-btn {
-  background: none;
-  border: none;
+  background: none; /* Garante que não há fundo */
+  border: none; /* Garante que não há borda */
   color: var(--text-primary);
-  position: middle;
-  font-size: 24px;
-  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 28px; /* Aumentamos o tamanho do ícone 'X' */
+  padding: 5px; /* Adiciona uma área de clique maior em volta do 'X' */
+  line-height: 1; /* Ajuda a centralizar o ícone verticalmente */
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out; /* Animação suave */
 }
+
 .remove-btn:hover {
-  background-color: var(--danger-color-hover);
+  color: var(--danger-color-hover);
+  transform: scale(1.5); /* Aumenta o tamanho do botão em 20% ao passar o mouse */
 }
 
 /* --- BARRA SUPERIOR E NOVO LAYOUT --- */
