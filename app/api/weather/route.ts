@@ -1,7 +1,7 @@
 // app/api/weather/route.ts
 import { NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
-import { WeatherInfo } from '@/types/weather'; // CAMINHO CORRIGIDO
+import { WeatherInfo } from '@/types/weather';
 
 const CACHE_TTL = 60 * 60; // 1 hora em segundos
 
@@ -34,8 +34,9 @@ async function fetchAndProcessWeatherData(
         rain: hourlyData.precipitation[index],
       };
     })
+    // Correção: Removido o tipo 'any' do parâmetro não utilizado '_'
     .filter(
-      (_: any, index: number) =>
+      (_: { hour: number; rain: number }, index: number) =>
         index >= offset * 24 && index < (offset + 1) * 24
     );
 
@@ -68,7 +69,9 @@ export async function GET(request: Request) {
   try {
     const cachedData = await redis.get(cacheKey);
     if (cachedData) {
-      return NextResponse.json(JSON.parse(cachedData as string));
+      // Correção: Adicionado tipo para o retorno do JSON.parse
+      const parsedData: WeatherInfo = JSON.parse(cachedData as string);
+      return NextResponse.json(parsedData);
     }
 
     const weatherData = await fetchAndProcessWeatherData(city, state, dayOffset);
@@ -82,10 +85,10 @@ export async function GET(request: Request) {
     await redis.set(cacheKey, JSON.stringify(weatherData), { ex: CACHE_TTL });
     return NextResponse.json(weatherData);
   } catch (error) {
+    // Correção: Tratamento de erro mais seguro
     console.error(error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erro interno do servidor';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
