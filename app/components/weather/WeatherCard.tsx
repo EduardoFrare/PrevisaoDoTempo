@@ -1,10 +1,10 @@
 // app/components/weather/WeatherCard.tsx
 "use client";
 
-import { useState } from "react";
-import { X, ChevronDown, ChevronUp } from "lucide-react";
-import { getWeatherDescription } from "@/services/weatherService";
+import { useState, useEffect } from "react";
 import type { WeatherInfo } from "@/types/weather";
+import { getWeatherDescription } from "@/services/weatherService";
+import { X, ChevronDown, ChevronUp } from "lucide-react";
 import RainChart from "./RainChart";
 import { WeatherIcon } from "./WeatherIcon";
 
@@ -19,42 +19,47 @@ export default function WeatherCard({
   onRemove,
   isAllChartsOpen,
 }: WeatherCardProps) {
-  const [isChartOpen, setIsChartOpen] = useState(false);
+  const [isChartVisible, setIsChartVisible] = useState(false);
   const weatherDescription = getWeatherDescription(city.code);
 
-  const toggleChart = () => {
-    setIsChartOpen(!isChartOpen);
-  };
-
-  const isOpen = isAllChartsOpen || isChartOpen;
+  useEffect(() => {
+    setIsChartVisible(isAllChartsOpen);
+  }, [isAllChartsOpen]);
 
   return (
-    <div className="card">
-      <button className="remove-btn" onClick={() => onRemove(city.name)}>
-        <X size={20} />
-      </button>
+    // Mantendo a classe principal original "weather-card"
+    <div className="weather-card">
       <div className="card-header">
-        <h2>{city.name}</h2>
-        <div className="weather-info">
-          <WeatherIcon code={city.code} size={32} />
-          <span>{weatherDescription}</span>
-        </div>
+        <h2 className="city-name">
+          {city.name}
+          {/* O ícone novo é usado aqui, dentro da estrutura antiga */}
+          <span style={{ marginLeft: '10px', verticalAlign: 'middle' }}>
+            <WeatherIcon code={city.code} size={28} title={weatherDescription} />
+          </span>
+        </h2>
+        <button onClick={() => onRemove(city.name)} className="remove-btn">
+          <X size={24} />
+        </button>
       </div>
-      <div className="temp-details">
-        <p className="temp-max">Máx: {city.max}°</p>
-        <p className="temp-min">Mín: {city.min}°</p>
+
+      {/* Mantendo a classe "card-body" e a estrutura dos parágrafos */}
+      <div className="card-body">
+        <p>🌡️ Máx: {city.max}°C / Mín: {city.min}°C</p>
+        <p>💧 Chuva: {city.rain} mm</p>
+        <p>💨 Vento médio: {city.wind || 0} km/h</p>
       </div>
-      <div className="extra-details">
-        <p>Chuva: {city.rain}mm</p>
-      </div>
-      <div className="chart-toggle" onClick={toggleChart}>
-        <span>Previsão de chuva por hora</span>
-        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-      </div>
-      {isOpen && (
-        <div className="chart-container">
-          {/* Correção: a propriedade deve ser 'rainHours' e não 'data' */}
-          <RainChart rainHours={city.rainHours} />
+
+      {/* Mantendo a estrutura do botão e do container do gráfico */}
+      {city.rainHours && city.rainHours.length > 0 && (
+        <div className="rain-hours">
+          <button
+            className="rain-title-button"
+            onClick={() => setIsChartVisible(!isChartVisible)}
+          >
+            💧 Precipitação por Hora (mm)
+            {isChartVisible ? <ChevronUp /> : <ChevronDown />}
+          </button>
+          {isChartVisible && <RainChart rainHours={city.rainHours} />}
         </div>
       )}
     </div>

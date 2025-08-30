@@ -8,13 +8,14 @@ import {
   CloudFog,
   CloudDrizzle,
   CloudLightning,
-  LucideProps, // Correção: Importar LucideProps em vez de IconProps
+  LucideProps,
 } from "lucide-react";
 import React from "react";
 
-// Correção: Usar LucideProps
 interface WeatherIconProps extends LucideProps {
   code: number;
+  // Correção: Adicionar a propriedade 'title' opcional
+  title?: string;
 }
 
 export const WeatherIcon: React.FC<WeatherIconProps> = ({
