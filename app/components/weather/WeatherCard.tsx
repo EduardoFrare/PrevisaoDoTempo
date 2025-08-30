@@ -6,7 +6,7 @@ import { X, ChevronDown, ChevronUp } from "lucide-react";
 import { getWeatherDescription } from "@/services/weatherService";
 import type { WeatherInfo } from "@/types/weather";
 import RainChart from "./RainChart";
-import { WeatherIcon } from "./WeatherIcon"; // Importe o novo componente
+import { WeatherIcon } from "./WeatherIcon";
 
 type WeatherCardProps = {
   city: WeatherInfo;
@@ -36,7 +36,7 @@ export default function WeatherCard({
       <div className="card-header">
         <h2>{city.name}</h2>
         <div className="weather-info">
-          <WeatherIcon code={city.code}></WeatherIcon>
+          <WeatherIcon code={city.code} size={32} />
           <span>{weatherDescription}</span>
         </div>
       </div>
@@ -53,7 +53,8 @@ export default function WeatherCard({
       </div>
       {isOpen && (
         <div className="chart-container">
-          <RainChart data={city.rainHours} />
+          {/* Correção: a propriedade deve ser 'rainHours' e não 'data' */}
+          <RainChart rainHours={city.rainHours} />
         </div>
       )}
     </div>
