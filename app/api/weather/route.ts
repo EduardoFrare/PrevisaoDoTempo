@@ -45,7 +45,7 @@ async function fetchAndProcessWeatherData(
         max: Math.round(dailyData.temperature_2m_max[offset]),
         min: Math.round(dailyData.temperature_2m_min[offset]),
         rain: parseFloat(dailyData.precipitation_sum[offset].toFixed(2)),
-        wind: 0, // O vento não está sendo buscado nesta versão
+        wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
         code: dailyData.weathercode[offset],
         rainHours: rainHours,
     };
