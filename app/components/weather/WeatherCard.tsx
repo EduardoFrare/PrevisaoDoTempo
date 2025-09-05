@@ -46,7 +46,7 @@ export default function WeatherCard({
       <div className="card-body">
         <p>🌡️ Máx: {city.max}°C / Mín: {city.min}°C</p>
         <p>💧 Chuva: {city.rain} mm</p>
-        <p>💨 Vento médio: {city.wind || 0} km/h</p>
+        <p>💨 Vento: {city.wind || 0} km/h</p>
       </div>
 
       {/* Mantendo a estrutura do botão e do container do gráfico */}

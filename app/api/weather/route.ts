@@ -21,8 +21,9 @@ async function fetchAndProcessWeatherData(
     if (!geoJson.results || geoJson.results.length === 0) return null;
     const { latitude, longitude } = geoJson.results[0];
 
+    // CORREÇÃO: Adicionado 'windspeed_10m_max' aos parâmetros 'daily'
     const weatherRes = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5`
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5`
     );
     if (!weatherRes.ok) return null;
     const weatherJson = await weatherRes.json();
