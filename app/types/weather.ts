@@ -1,6 +1,6 @@
 // app/types/weather.ts
 
-// Tipagem da resposta da API OpenWeatherMap
+// Tipagem da resposta da API OpenWeatherMap (mantida para referência, se usada em outro lugar)
 export interface ForecastItem {
   dt: number;
   dt_txt: string;
@@ -33,6 +33,7 @@ export interface WeatherInfo {
   max: number;
   min: number;
   rain: number;
+  rainProbability?: number; // ADICIONADO: Nova propriedade opcional
   wind: number;
   code: number;
   rainHours: { hour: number; rain: number }[];

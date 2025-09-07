@@ -31,25 +31,17 @@ export default function WeatherCard({
       <div className="card-header">
         <h2 className="city-name">
           {city.name}
-          <span style={{ marginLeft: '10px', verticalAlign: 'middle' }}>
-            <WeatherIcon code={city.code} size={28} title={weatherDescription} />
-          </span>
         </h2>
-        <div className="card-header-right">
-          {typeof city.currentTemperature === 'number' && (
-            <span className="current-temp">
-              {city.currentTemperature}°
-            </span>
-          )}
-          <button onClick={() => onRemove(city.name)} className="remove-btn">
-            <X size={24} />
-          </button>
+        <div className="weather-info">
+          <WeatherIcon code={city.code} size={28} title={weatherDescription} />
+          {typeof city.currentTemperature === 'number' && <span>{city.currentTemperature}°</span>}
+          <button onClick={() => onRemove(city.name)} className="remove-btn"><X size={24} /></button>
         </div>
       </div>
 
       <div className="card-body">
         <p>🌡️ Máx: {city.max}°C / Mín: {city.min}°C</p>
-        <p>💧 Chuva: {city.rain} mm</p>
+        <p>💧 Chuva: {city.rain} mm {typeof city.rainProbability === 'number' && ` - ${city.rainProbability}%`}</p>
         <p>💨 Vento: {city.wind || 0} km/h</p>
       </div>
 

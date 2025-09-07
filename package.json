@@ -1,6 +1,6 @@
 {
-  "name": "sitezinho",
-  "version": "0.1.0",
+  "name": "cardsclima",
+  "version": "3.4.2",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

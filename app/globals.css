@@ -1,6 +1,4 @@
-/* app/globals.css */
-
-/* --- CÓDIGO CSS - COM CORES CENTRALIZADAS EM :ROOT --- */
+/* app/globals.css (Completo e Corrigido) */
 
 /* --- 1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS --- */
 *,
@@ -15,16 +13,12 @@
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --border-color: #334155;
-
-  /* Cores de Ação e Feedback */
   --accent-color: #3b82f6;
   --accent-color-hover: #2563eb;
   --success-color: #16a34a;
   --success-color-hover: #15803d;
   --danger-color: #ef4444;
   --danger-color-hover: #dc2626;
-
-  /* Outras cores e sombras (Dark) */
   --white: #ffffff;
   --focus-ring-color: rgba(59, 130, 246, 0.2);
   --shadow-color-subtle: rgba(0, 0, 0, 0.15);
@@ -39,12 +33,73 @@ body {
   padding: 0;
 }
 
-/* --- 2. LAYOUT PRINCIPAL E CONTROLES --- */
+/* --- NOVA ESTRUTURA DE LAYOUT PRINCIPAL --- */
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1; /* Faz o conteúdo principal crescer para empurrar o footer */
+  width: 100%;
+  position: relative; 
+  transition: padding-top 0.3s ease-in-out; /* Anima a descida */
+  padding-top: 60px; /* Espaço permanente para o header fixo */
+}
+
+/* Quando o painel abrir, aumenta o padding-top do main */
+main.panel-open {
+  padding-top: 145px; /* Altura do Header (60px) + Altura do Painel (aprox. 85px) */
+}
+
 .app-container {
   max-width: 1400px;
   margin: auto;
   width: 100%;
+  padding: 20px;
 }
+/* --- FIM DA NOVA ESTRUTURA --- */
+
+
+/* --- BARRA SUPERIOR E PAINEL (AJUSTADOS) --- */
+.header-bar {
+  position: fixed; /* Header fica fixo no topo da tela */
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 10px var(--shadow-color-light);
+  z-index: 1001; /* Garante que fique acima de tudo */
+  height: 60px;
+}
+
+.add-city-panel {
+  background-color: var(--card-bg);
+  padding: 20px;
+  position: fixed;
+  top: 60px; /* Posicionado logo abaixo do header */
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Fica abaixo do header, mas acima do conteúdo */
+  transform: translateY(-100%); /* Escondido para cima */
+  transition: transform 0.3s ease-in-out;
+  border-bottom: 1px solid var(--border-color);
+  visibility: hidden;
+}
+
+.add-city-panel.open {
+  transform: translateY(0); /* Desliza para a posição correta */
+  visibility: visible;
+}
+/* --- FIM DOS AJUSTES --- */
+
+
+/* --- SEU CSS ORIGINAL (sem alterações) --- */
 .controls {
   display: flex;
   gap: 12px;
@@ -98,14 +153,11 @@ body {
   text-align: center;
   font-weight: 500;
 }
-
-/* --- 3. CARDS DE PREVISÃO --- */
 .cards {
   display: grid;
   gap: 20px;
   align-items: start;
   grid-template-columns: 1fr;
-  /* Removido o padding-top daqui para ser controlado pelo container */
 }
 @media (min-width: 768px) {
   .cards {
@@ -117,7 +169,6 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 .weather-card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -128,11 +179,19 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 .weather-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px var(--shadow-color-light);
 }
+
+.weather-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -140,7 +199,6 @@ body {
   padding: 10px 20px;
   border-bottom: 1px solid var(--border-color);
 }
-
 .city-name {
   margin: 0;
   font-size: 1.25rem;
@@ -151,7 +209,6 @@ body {
   margin-left: 8px;
   vertical-align: middle;
 }
-
 .card-body {
   padding: 0 20px;
 }
@@ -163,9 +220,6 @@ body {
   gap: 8px;
   color: var(--text-primary);
 }
-
-/* --- 4. GRÁFICO DE BARRAS DE CHUVA --- */
-
 .rain-title-button {
   background: none;
   border: none;
@@ -173,7 +227,7 @@ body {
   cursor: pointer;
   padding: 10px 0;
   width: 100%;
-  font-weight: 500;
+  font-weight: 700;
   border-top: 1px solid var(--border-color);
   text-align: center;
   display: flex;
@@ -182,11 +236,9 @@ body {
   gap: 8px;
   transition: background-color 0.2s;
 }
-
 .rain-title-button:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
-
 .rain-chart {
   background-color: var(--rain-chart-bg-dark);
   border-radius: 12px;
@@ -198,7 +250,6 @@ body {
   width: 100%;
   animation: slideDown 0.5s ease-out forwards;
 }
-
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -209,7 +260,6 @@ body {
     transform: translateY(0);
   }
 }
-
 .chart-bar-item {
   display: flex;
   flex-direction: column;
@@ -220,7 +270,6 @@ body {
   flex: 1;
   min-width: 0;
 }
-
 .bar-container {
   width: 100%;
   height: 100%;
@@ -270,11 +319,9 @@ body {
   flex-shrink: 0;
   visibility: hidden;
 }
-
 .chart-bar-item:nth-child(6n + 1) .label-hour,.chart-bar-item:last-child .label-hour{
   visibility: visible;
 }
-
 .loading-indicator {
   display: flex;
   flex-direction: column;
@@ -285,47 +332,26 @@ body {
   color: var(--text-primary);
   font-size: 1.2rem;
 }
-
 .loading-icon {
   font-size: 4rem;
   animation: bounce 1.0s infinite ease-in-out;
   margin-bottom: 1rem;
 }
-
 .remove-btn {
-  background: none; /* Garante que não há fundo */
-  border: none; /* Garante que não há borda */
+  background: none;
+  border: none;
   color: var(--text-primary);
   cursor: pointer;
   padding: 0;
-  font-size: 28px; /* Aumentamos o tamanho do ícone 'X' */
-  line-height: 1; /* Ajuda a centralizar o ícone verticalmente */
-  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out; /* Animação suave */
+  font-size: 28px;
+  line-height: 1;
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
   text-align: center;
 }
-
 .remove-btn:hover {
   color: var(--danger-color-hover);
-  transform: scale(1.5); /* Aumenta o tamanho do botão em 20% ao passar o mouse */
+  transform: scale(1.5);
 }
-
-/* --- BARRA SUPERIOR E NOVO LAYOUT --- */
-.header-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  background-color: var(--card-bg);
-  box-shadow: 0 2px 10px var(--shadow-color-light);
-  z-index: 1000;
-  height: 60px;
-  position: relative;
-}
-
 .menu-button {
   background: none;
   border: none;
@@ -341,14 +367,11 @@ body {
   top: 50%;
   transform: translateY(-50%);
 }
-
 .day-selector {
   display: flex;
   gap: 8px;
   margin: 0 auto;
 }
-
-/* --- ESTILOS UNIFICADOS PARA BOTÕES DO CABEÇALHO --- */
 .day-selector button,
 .toggle-all-charts-btn {
   background-color: transparent;
@@ -363,46 +386,23 @@ body {
   align-items: center;
   gap: 5px;
 }
-
 .day-selector button:hover,
 .toggle-all-charts-btn:hover {
   background-color: var(--background);
   border-color: var(--accent-color);
   color: var(--text-primary);
 }
-
 .day-selector button.active {
   background-color: var(--accent-color);
   color: var(--white);
   border-color: var(--accent-color);
 }
-
 .toggle-all-charts-btn {
   position: absolute;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
 }
-/* --- FIM DOS ESTILOS UNIFICADOS --- */
-
-/* --- PAINEL DE ADICIONAR CIDADE --- */
-.add-city-panel {
-  background-color: var(--card-bg);
-  padding: 20px;
-  position: fixed;
-  top: 60px;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  transform: translateY(-150%);
-  transition: transform 0.3s ease-in-out;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.add-city-panel.open {
-  transform: translateY(0);
-}
-
 .add-city-panel .input-group {
   display: flex;
   gap: 10px;
@@ -412,42 +412,12 @@ body {
 .add-city-panel .city-input {
   flex-grow: 1;
 }
-
 .error-msg-panel {
   color: var(--danger-color);
   text-align: center;
   font-size: 14px;
   margin-top: 15px;
 }
-
-/* --- AJUSTES NO CONTAINER PRINCIPAL --- */
-main {
-  width: 100%;
-}
-
-.app-container {
-  /* CORREÇÃO FINAL: Adicionado padding-top para levantar o conteúdo */
-  padding: 20px 20px 20px 20px;
-  transition: padding-top 0.3s ease-in-out;
-}
-
-.app-container.panel-open {
-  padding-top: 100px;
-}
-
-.card-header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px; /* Espaçamento entre a temperatura e o botão 'X' */
-}
-
-.current-temp {
-  font-size: 1.25rem; /* Mesmo tamanho da fonte do nome da cidade */
-  font-weight: 700; /* Mesmo peso da fonte do nome da cidade */
-  color: var(--text-primary);
-}
-
-/* --- ANIMAÇÃO DE BOUNCE (se precisar) --- */
 @keyframes bounce {
   0%, 100% {
     transform: translateY(0);
@@ -455,4 +425,32 @@ main {
   50% {
     transform: translateY(-15px);
   }
+}
+
+/* --- ESTILOS DO RODAPÉ --- */
+.footer-bar {
+  background-color: var(--card-bg);
+  padding: 8px 20px;
+  width: 100%;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0; /* Impede que o rodapé encolha */
+}
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+.footer-content a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-content a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
 }

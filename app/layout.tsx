@@ -1,13 +1,10 @@
-// Caminho do arquivo: app/layout.tsx
+// app/layout.tsx
 
 import type { Metadata } from "next";
-// 1. Importe a fonte que você quer usar do next/font/google
-import { Poppins } from "next/font/google"; 
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import Footer from "./components/controls/Footer"; 
 
-// 2. Configure a fonte.
-// 'subsets' informa quais caracteres carregar (latin é o padrão para nosso alfabeto)
-// 'weight' informa os pesos da fonte que vamos usar
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -26,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="pt-br" suppressHydrationWarning>
       <body className={poppins.className}>
-        {children}
+        <div className="site-wrapper">
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   );

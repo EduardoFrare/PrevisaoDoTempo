@@ -18,8 +18,9 @@ async function fetchAndProcessWeatherData(
     if (!geoJson.results || geoJson.results.length === 0) return null;
     const { latitude, longitude } = geoJson.results[0];
 
+    // ADICIONADO: 'precipitation_probability_max' aos parâmetros 'daily'
     const weatherRes = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5&current=temperature_2m`
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,windspeed_10m_max&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5&current=temperature_2m`
     );
     if (!weatherRes.ok) return null;
     const weatherJson = await weatherRes.json();
@@ -42,6 +43,8 @@ async function fetchAndProcessWeatherData(
         max: Math.round(dailyData.temperature_2m_max[offset]),
         min: Math.round(dailyData.temperature_2m_min[offset]),
         rain: parseFloat(dailyData.precipitation_sum[offset].toFixed(2)),
+        // ADICIONADO: Nova propriedade com a probabilidade de chuva
+        rainProbability: dailyData.precipitation_probability_max[offset],
         wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
         code: dailyData.weathercode[offset],
         rainHours: rainHours,

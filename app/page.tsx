@@ -1,7 +1,7 @@
+// app/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
-// Vamos criar um novo componente HeaderBar e AddCityPanel a partir do Controls
 import { HeaderBar } from "./components/controls/HeaderBar";
 import { AddCityPanel } from "./components/controls/AddCityPanel";
 import WeatherCard from "./components/weather/WeatherCard";
@@ -17,7 +17,7 @@ export default function Home() {
   const [newCity, setNewCity] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isPanelOpen, setIsPanelOpen] = useState(false); // Novo estado para o painel
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [areAllChartsOpen, setAreAllChartsOpen] = useState(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Home() {
     setCities([...cities, { name: cityName, state: state }]);
     setNewCity("");
     setErrorMsg("");
-    setIsPanelOpen(false); // Fecha o painel após adicionar
+    setIsPanelOpen(false);
   }
 
   function removeCity(cityNameWithState: string) {
@@ -67,18 +67,17 @@ export default function Home() {
   }
 
   return (
-    <main>
-      {/* O HeaderBar fica fixo no topo */}
+    // A classe agora é aplicada aqui no <main>
+    <main className={isPanelOpen ? 'panel-open' : ''}>
       <HeaderBar
         dayOffset={dayOffset}
         onDayChange={setDayOffset}
-        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)} // Função para abrir/fechar
+        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
         isPanelOpen={isPanelOpen}
         onToggleAllCharts={toggleAllCharts}
         areAllChartsOpen={areAllChartsOpen}
       />
       
-      {/* O AddCityPanel aparece e desaparece */}
       <AddCityPanel
         isOpen={isPanelOpen}
         newCity={newCity}
@@ -87,8 +86,8 @@ export default function Home() {
         errorMsg={errorMsg}
       />
 
-      {/* Container principal que se ajusta quando o painel está aberto */}
-      <div className={`app-container ${isPanelOpen ? 'panel-open' : ''}`}>
+      {/* A div interna agora é mais simples */}
+      <div className="app-container">
         {isLoading ? (
           <LoadingIndicator />
         ) : (
