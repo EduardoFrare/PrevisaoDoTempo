@@ -11,7 +11,7 @@ export const INITIAL_CITIES: City[] = [
   { name: 'Erechim', state: 'RS', lat: -27.63, lon: -52.27 },
   { name: 'Carazinho', state: 'RS', lat: -28.28, lon: -52.78 },
   { name: 'Santo Angelo', state: 'RS', lat: -28.30, lon: -54.26 },
-  { name: 'Santa Rosa', state: 'RS', lat: -27.87, lon: -54.48 }, 
+  //{ name: "Santa Rosa", state: "RS", lat: -27.8725, lon: -54.4703 }, 
   { name: 'Lages', state: 'SC', lat: -27.81, lon: -50.32 },
   { name: 'Ijui', state: 'RS', lat: -28.38, lon: -53.91 },
   { name: 'Vacaria', state: 'RS', lat: -28.51, lon: -50.93 },
