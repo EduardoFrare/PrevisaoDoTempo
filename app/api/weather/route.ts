@@ -3,8 +3,7 @@ import { NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
 import { WeatherInfo } from '@/types/weather';
 
-// Mantido em 1 hora para atualizações frequentes via cron
-const CACHE_TTL = 3600; 
+const CACHE_TTL = 1800; 
 
 async function fetchAndProcessWeatherData(
   city: string,
