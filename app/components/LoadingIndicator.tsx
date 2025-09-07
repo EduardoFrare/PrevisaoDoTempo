@@ -1,14 +1,17 @@
 // app/components/LoadingIndicator.tsx
-import React from 'react';
-import { WiCloud } from 'react-icons/wi'; // Certifique-se de ter react-icons instalado
+"use client";
 
-const LoadingIndicator = () => {
+import { WiCloud } from 'react-icons/wi';
+
+interface LoadingIndicatorProps {
+  showText?: boolean;
+}
+
+export default function LoadingIndicator({ showText = true }: LoadingIndicatorProps) {
   return (
     <div className="loading-indicator">
-      <WiCloud className="loading-icon" /> {/* Ícone de nuvem */}
-      <p>Carregando dados do clima...</p>
+      <WiCloud className="loading-icon" />
+      {showText && <p>Carregando dados...</p>}
     </div>
   );
-};
-
-export default LoadingIndicator;
+}

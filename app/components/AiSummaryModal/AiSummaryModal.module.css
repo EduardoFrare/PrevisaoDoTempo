@@ -1,4 +1,4 @@
-/* app/components/AiSummaryModal/AiSummaryModal.module.css */
+/* app/components/AiSummaryModal/AiSummaryModal.module.css (Corrigido) */
 
 .overlay {
   position: fixed;
@@ -11,18 +11,19 @@
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  padding: 20px;
+  padding: 20px; /* Garante o espaçamento nas laterais em telas pequenas */
 }
 
 .content {
   background-color: var(--card-bg);
-  padding: 20px;
   border-radius: 16px;
-  width: 100%;
-  max-width: 600px;
+  width: 100%; 
   border: 1px solid var(--border-color);
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   animation: fadeIn 0.3s ease-out;
+  display: flex; /* Adicionado para controlar melhor o conteúdo interno */
+  flex-direction: column; /* Adicionado */
+  max-height: 80vh; /* Impede que o modal seja maior que a tela */
 }
 
 .header {
@@ -30,8 +31,8 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
-  margin-bottom: 15px;
+  padding: 20px; /* Padding interno consistente */
+  flex-shrink: 0; /* Impede que o header encolha */
 }
 
 .header h3 {
@@ -50,26 +51,22 @@
 .body {
   color: var(--text-secondary);
   line-height: 1.6;
-  max-height: 60vh;
+  white-space: pre-wrap;
+  padding: 20px;
   overflow-y: auto;
-  white-space: pre-wrap; /* Respeita as quebras de linha da IA */
+  display: flex;
+  flex-direction: column;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1; 
+  min-height: 200px;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
-}
-
-.loadingSpinner {
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-left-color: var(--accent-color);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }

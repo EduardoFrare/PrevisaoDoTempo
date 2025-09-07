@@ -13,12 +13,16 @@
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --border-color: #334155;
+
+  /* Cores de Ação e Feedback */
   --accent-color: #3b82f6;
   --accent-color-hover: #2563eb;
   --success-color: #16a34a;
   --success-color-hover: #15803d;
   --danger-color: #ef4444;
   --danger-color-hover: #dc2626;
+
+  /* Outras cores e sombras (Dark) */
   --white: #ffffff;
   --focus-ring-color: rgba(59, 130, 246, 0.2);
   --shadow-color-subtle: rgba(0, 0, 0, 0.15);
@@ -33,7 +37,7 @@ body {
   padding: 0;
 }
 
-/* --- NOVA ESTRUTURA DE LAYOUT PRINCIPAL --- */
+/* --- ESTRUTURA DE LAYOUT PRINCIPAL --- */
 .site-wrapper {
   display: flex;
   flex-direction: column;
@@ -41,16 +45,15 @@ body {
 }
 
 main {
-  flex-grow: 1; /* Faz o conteúdo principal crescer para empurrar o footer */
+  flex-grow: 1;
   width: 100%;
   position: relative; 
-  transition: padding-top 0.3s ease-in-out; /* Anima a descida */
-  padding-top: 60px; /* Espaço permanente para o header fixo */
+  transition: padding-top 0.3s ease-in-out;
+  padding-top: 60px;
 }
 
-/* Quando o painel abrir, aumenta o padding-top do main */
 main.panel-open {
-  padding-top: 145px; /* Altura do Header (60px) + Altura do Painel (aprox. 85px) */
+  padding-top: 145px;
 }
 
 .app-container {
@@ -59,12 +62,10 @@ main.panel-open {
   width: 100%;
   padding: 20px;
 }
-/* --- FIM DA NOVA ESTRUTURA --- */
 
-
-/* --- BARRA SUPERIOR E PAINEL (AJUSTADOS) --- */
+/* --- BARRA SUPERIOR E PAINEL --- */
 .header-bar {
-  position: fixed; /* Header fica fixo no topo da tela */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -74,7 +75,7 @@ main.panel-open {
   padding: 10px 20px;
   background-color: var(--card-bg);
   box-shadow: 0 2px 10px var(--shadow-color-light);
-  z-index: 1001; /* Garante que fique acima de tudo */
+  z-index: 1001;
   height: 60px;
 }
 
@@ -82,77 +83,82 @@ main.panel-open {
   background-color: var(--card-bg);
   padding: 20px;
   position: fixed;
-  top: 60px; /* Posicionado logo abaixo do header */
+  top: 60px;
   left: 0;
   right: 0;
-  z-index: 1000; /* Fica abaixo do header, mas acima do conteúdo */
-  transform: translateY(-100%); /* Escondido para cima */
+  z-index: 1000;
+  transform: translateY(-100%);
   transition: transform 0.3s ease-in-out;
   border-bottom: 1px solid var(--border-color);
   visibility: hidden;
 }
 
 .add-city-panel.open {
-  transform: translateY(0); /* Desliza para a posição correta */
+  transform: translateY(0);
   visibility: visible;
 }
-/* --- FIM DOS AJUSTES --- */
 
-
-/* --- SEU CSS ORIGINAL (sem alterações) --- */
-.controls {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 25px;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 16px;
-  background-color: var(--card-bg);
-  border-radius: 12px;
+/* --- ESTILOS DOS CONTROLES DO HEADER --- */
+.menu-button {
+  background: none;
   border: none;
-  box-shadow: 0 6px 20px var(--shadow-color-light);
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
 }
-.day-select,
-.city-input {
-  padding: 10px 16px;
-  border-radius: 8px;
+
+.day-selector {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.day-selector button,
+.toggle-all-charts-btn {
+  background-color: transparent;
   border: 1px solid var(--border-color);
-  font-size: 14px;
-  transition: all 0.2s ease-in-out;
-  background-color: var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.day-selector button:hover,
+.toggle-all-charts-btn:hover {
+  background-color: var(--background);
+  border-color: var(--accent-color);
   color: var(--text-primary);
 }
-.city-input {
-  width: 220px;
-}
-.city-input:focus,
-.day-select:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px var(--focus-ring-color);
-}
-.add-btn{
-  padding: 10px 16px;
-  border-radius: 8px;
+
+.day-selector button.active {
+  background-color: var(--accent-color);
   color: var(--white);
-  cursor: pointer;
-  border: none;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+  border-color: var(--accent-color);
 }
-.add-btn {
-  background-color: var(--success-color);
+
+.header-actions {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 10px;
 }
-.add-btn:hover {
-  background-color: var(--success-color-hover);
-}
-.error-msg {
-  color: var(--danger-color);
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: 500;
-}
+
+/* --- CARDS DE PREVISÃO (ALTERADO PARA ALINHAMENTO) --- */
 .cards {
   display: grid;
   gap: 20px;
@@ -183,14 +189,6 @@ main.panel-open {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px var(--shadow-color-light);
 }
-
-.weather-info {
-  display: flex;
-  align-items: center; /* A mágica para centralizar verticalmente */
-  gap: 8px;
-  font-size: 1.5rem;
-}
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -198,23 +196,39 @@ main.panel-open {
   padding: 10px 20px;
   border-bottom: 1px solid var(--border-color);
 }
+.card-header-left { /* Novo agrupador para cidade e estado */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinha o texto da cidade à esquerda */
+}
 .city-name {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
 }
 .city-name span {
-  font-size: 1.5rem;
-  margin-left: 8px;
-  vertical-align: middle;
+  font-size: 0.9rem; /* Tamanho menor para o estado */
+  color: var(--text-secondary);
+  margin-left: 5px;
 }
 
-.current-temp {
-  font-size: 1.5rem;
+.card-header-right { /* Novo agrupador para nuvem, temp e X */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espaço entre os elementos da direita */
+}
+
+.weather-info { /* Agrupa a nuvem e a temperatura */
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre a nuvem e a temperatura */
+  font-size: 1.25rem; /* Garante que a temp tenha o mesmo tamanho do nome da cidade */
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1;
-  margin-left: 16px;
+}
+.weather-info .wi { /* Estilo específico para o ícone de tempo dentro de .weather-info */
+  font-size: 1.5rem; /* Ajuste o tamanho do ícone aqui */
+  line-height: 1; /* Para alinhar melhor */
 }
 
 .card-body {
@@ -228,6 +242,8 @@ main.panel-open {
   gap: 8px;
   color: var(--text-primary);
 }
+
+/* --- RESTANTE DO CSS (SEM ALTERAÇÕES SIGNIFICATIVAS, APENAS REORGANIZADO) --- */
 .rain-title-button {
   background: none;
   border: none;
@@ -341,9 +357,17 @@ main.panel-open {
   font-size: 1.2rem;
 }
 .loading-icon {
-  font-size: 4rem;
+  font-size: 6rem; /* Nuvem de loading maior */
   animation: bounce 1.0s infinite ease-in-out;
   margin-bottom: 1rem;
+}
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
 .remove-btn {
   background: none;
@@ -360,65 +384,39 @@ main.panel-open {
   color: var(--danger-color-hover);
   transform: scale(1.5);
 }
-.menu-button {
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 24px;
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.day-selector {
-  display: flex;
-  gap: 8px;
-  margin: 0 auto;
-}
-.day-selector button,
-.toggle-all-charts-btn {
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.day-selector button:hover,
-.toggle-all-charts-btn:hover {
-  background-color: var(--background);
-  border-color: var(--accent-color);
-  color: var(--text-primary);
-}
-.day-selector button.active {
-  background-color: var(--accent-color);
-  color: var(--white);
-  border-color: var(--accent-color);
-}
-.toggle-all-charts-btn {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
 .add-city-panel .input-group {
   display: flex;
   gap: 10px;
   max-width: 400px;
   margin: 0 auto;
 }
-.add-city-panel .city-input {
+.add-city-panel .city-input, .city-input {
   flex-grow: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+.add-city-panel .city-input:focus, .city-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
+}
+.add-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: var(--white);
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--success-color);
+}
+.add-btn:hover {
+  background-color: var(--success-color-hover);
 }
 .error-msg-panel {
   color: var(--danger-color);
@@ -426,22 +424,12 @@ main.panel-open {
   font-size: 14px;
   margin-top: 15px;
 }
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-/* --- ESTILOS DO RODAPÉ --- */
 .footer-bar {
   background-color: var(--card-bg);
   padding: 8px 20px;
   width: 100%;
   border-top: 1px solid var(--border-color);
-  flex-shrink: 0; /* Impede que o rodapé encolha */
+  flex-shrink: 0;
 }
 .footer-content {
   display: flex;
@@ -466,24 +454,25 @@ main.panel-open {
 /* --- ESTILOS PARA O BOTÃO FLUTUANTE DE IA --- */
 .ai-floating-button {
   position: fixed;
-  bottom: 25px; /* Distância do fundo */
-  right: 25px; /* Distância da direita */
-  background-color: var(--accent-color);
-  color: var(--white);
+  bottom: 25px;
+  right: 25px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
   width: 56px;
   height: 56px;
-  border-radius: 50%; /* Deixa o botão redondo */
-  border: none;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px var(--shadow-color-light);
   cursor: pointer;
-  z-index: 1050; /* Garante que fique acima dos cards */
-  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  z-index: 1050;
+  transition: all 0.2s ease;
 }
 
 .ai-floating-button:hover {
-  background-color: var(--accent-color-hover);
-  transform: scale(1.1); /* Efeito de crescimento ao passar o mouse */
+  background-color: var(--background);
+  border-color: var(--accent-color);
+  color: var(--text-primary);
 }

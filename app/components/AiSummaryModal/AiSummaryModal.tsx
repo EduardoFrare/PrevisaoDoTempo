@@ -1,8 +1,10 @@
 // app/components/AiSummaryModal/AiSummaryModal.tsx
 "use client";
 
-import { X } from "lucide-react";
-import styles from './AiSummaryModal.module.css'; // Importa o CSS como um módulo
+import { FiX } from 'react-icons/fi';
+import styles from './AiSummaryModal.module.css';
+// 1. Importar o nosso componente de loading
+import LoadingIndicator from '../LoadingIndicator';
 
 type AiSummaryModalProps = {
   isOpen: boolean;
@@ -19,11 +21,14 @@ export function AiSummaryModal({ isOpen, onClose, summary, isLoading }: AiSummar
       <div className={styles.content}>
         <div className={styles.header}>
           <h3>Resumo do Agente de IA</h3>
-          <button onClick={onClose} className={styles.closeBtn}><X size={24} /></button>
+          <button onClick={onClose} className={styles.closeBtn}><FiX size={24} /></button>
         </div>
         <div className={styles.body}>
           {isLoading ? (
-            <div className={styles.loadingSpinner}></div>
+            // 2. Usar o LoadingIndicator com showText={false}
+            <div className={styles.loadingContainer}>
+              <LoadingIndicator showText={false} />
+            </div>
           ) : (
             <p>{summary}</p>
           )}
