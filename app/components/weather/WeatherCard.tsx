@@ -29,19 +29,28 @@ export default function WeatherCard({
   return (
     <div className="weather-card">
       <div className="card-header">
-        <h2 className="city-name">
-          {city.name}
-        </h2>
-        <div className="weather-info">
-          <WeatherIcon code={city.code} size={28} title={weatherDescription} />
-          {typeof city.currentTemperature === 'number' && <span>{city.currentTemperature}°</span>}
-          <button onClick={() => onRemove(city.name)} className="remove-btn"><X size={24} /></button>
+        <h2 className="city-name">{city.name}</h2>
+
+        <div className="card-header-right">
+          {/* Mostra a temperatura atual SÓ se for o dia de "Hoje" */}
+          {typeof city.currentTemperature === 'number' && (
+            <div className="weather-info">
+              <WeatherIcon code={city.code} size={28} title={weatherDescription} />
+              <span>{city.currentTemperature}°</span>
+            </div>
+          )}
+          <button onClick={() => onRemove(city.name)} className="remove-btn">
+            <X size={24} />
+          </button>
         </div>
       </div>
 
       <div className="card-body">
         <p>🌡️ Máx: {city.max}°C / Mín: {city.min}°C</p>
-        <p>💧 Chuva: {city.rain} mm {typeof city.rainProbability === 'number' && ` - ${city.rainProbability}%`}</p>
+        <p>
+          💧 Chuva: {city.rain} mm
+          {typeof city.rainProbability === 'number' && ` - ${city.rainProbability}%`}
+        </p>
         <p>💨 Vento: {city.wind || 0} km/h</p>
       </div>
 

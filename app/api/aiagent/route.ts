@@ -1,14 +1,9 @@
-// app/api/aiagent/route.ts
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import type { WeatherInfo } from "@/types/weather";
-// 1. Importar o nosso cliente Redis
 import { redis } from "@/lib/redis";
 
-// 2. Definir o tempo de vida do cache (1800 segundos = 30 minutos)
 const CACHE_TTL = 1800;
-
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 
 const getDayName = (offset: string): string => {
@@ -22,6 +17,16 @@ const getDayName = (offset: string): string => {
   return `para ${dayOfWeek}`;
 };
 
+// CORREÇÃO: Trocamos 'any' por 'unknown' para seguir as regras do ESLint
+const createDataFingerprint = (data: unknown): string => {
+  const dataString = JSON.stringify(data);
+  let checksum = 0;
+  for (let i = 0; i < dataString.length; i++) {
+    checksum = (checksum + dataString.charCodeAt(i) * (i + 1)) % 1000000;
+  }
+  return checksum.toString();
+};
+
 export async function POST(request: Request) {
   try {
     const { weatherData, dayOffset } = (await request.json()) as { 
@@ -33,42 +38,41 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Dados do tempo não fornecidos." }, { status: 400 });
     }
 
-    // --- NOVA LÓGICA DE CACHE ---
+    const dataFingerprint = createDataFingerprint(weatherData);
+    const cacheKey = `summary:${dayOffset}:${dataFingerprint}`;
 
-    // 3. Criar uma chave de cache única baseada nas cidades e no dia
-    const cityNames = weatherData.map(city => city.name).sort().join('-');
-    const cacheKey = `summary:${cityNames}:${dayOffset}`;
-
-    // 4. Tentar buscar o resumo do cache primeiro
-    const cachedSummary = await redis.get<string>(cacheKey);
-    if (cachedSummary) {
-      console.log(`[AI AGENT] Retornando resumo do cache para a chave: ${cacheKey}`);
-      return NextResponse.json({ summary: cachedSummary });
+    const cachedData = await redis.get<{ summary: string, modelUsed: string }>(cacheKey);
+    if (cachedData) {
+      console.log(`[AI AGENT] Retornando dados do cache para a chave: ${cacheKey}`);
+      return NextResponse.json(cachedData);
     }
 
     console.log(`[AI AGENT] Cache não encontrado para a chave: ${cacheKey}. Gerando novo resumo.`);
-    // --- FIM DA LÓGICA DE CACHE ---
 
     const dayName = getDayName(dayOffset || "0");
 
     const prompt = `
-      Você é um assistente de logística amigável e direto para um app de delivery.
-      Sua tarefa é analisar os dados de previsão do tempo e criar um briefing para a equipe.
-      REGRAS ESTRITAS DE FORMATAÇÃO:
-      1. Comece a sua resposta EXATAMENTE com o seguinte cabeçalho: "Olá! Para ${dayName}, temos a seguinte situação:"
-      2. NÃO use nenhum outro título ou introdução.
-      3. NÃO use marcadores de lista como asteriscos (*) ou hifens (-).
-      4. Separe os pontos principais com uma linha em branco para criar parágrafos distintos.
-      5. Mantenha um tom conversacional, mas profissional.
-      FOCO DA ANÁLISE:
-      - **Pontos de Atenção:** Identifique cidades com condições adversas (chuva forte, ventos acima de 40 km/h, etc.) e explique o impacto prático (ex: "Atenção em [Cidade], a chuva pode causar lentidão no trânsito.").
-      - **Condições Ideais:** Se a maioria das cidades estiver com tempo bom, mencione isso de forma positiva (ex: "No geral, o dia está excelente para as entregas...").
-      - **Recomendação Final:** Termine com uma recomendação clara e curta para a equipe.
-      Aqui estão os dados:
+      Você é um assistente de logística sênior para um app de delivery, especialista em interpretar dados meteorológicos para otimizar a operação de motoboys. Sua análise deve ser pragmática e focada na segurança, eficiência e preocupação com a quantidade de entregadores.
+
+      **Análise Crítica (O que impede um motoboy de trabalhar):**
+      - **CHUVA:** Uma combinação de alta probabilidade (>70%) e volume significativo (>5mm) é PREOCUPANTE. Chuva moderada (entre 2-5mm) ou qualquer chuva com probabilidade acima de 40% são condições para FICAR DE OLHO.
+      - **VENTO:** Ventos constantes ou rajadas acima de 40 km/h são PREOCUPANTES. Ventos entre 25-39 km/h são para FICAR DE OLHO.
+      - **FRIO:** Uma temperatura MÁXIMA abaixo de 10°C é PREOCUPANTE, especialmente se combinado com chuva ou vento, pois aumenta o risco de hipotermia e desconforto extremo.
+
+      **Estrutura da Resposta:**
+      1.  Comece EXATAMENTE com o cabeçalho: "Olá! Para ${dayName}, a análise para a frota é a seguinte:"
+      2.  Faça um breve resumo geral do dia (1-2 frases).
+      3.  Crie a seção "Cidades Preocupantes". Liste as cidades que se encaixam nos critérios PREOCUPANTES e explique o motivo de forma direta (ex: "Chapecó, SC: Risco de chuva forte e contínua, visibilidade reduzida e pista escorregadia."). Se não houver nenhuma, ignore essa etapa.
+      4.  Crie a seção "Cidades para Ficar de Olho". Liste as cidades com condições moderadas que exigem atenção e explique o motivo (ex: "Passo Fundo, RS: Vento moderado no final da tarde, pode afetar o equilíbrio e a estabilidade."). Se não houver nenhuma, ignore essa etapa.
+      5.  Se ignorou as duas etapas acima, fale que ta tudo tranquilo.
+      6.  NÃO use nenhum outro formato. NÃO use asteriscos (*) ou hifens (-). Use parágrafos e quebras de linha.
+
+      Aqui estão os dados brutos:
       ${JSON.stringify(weatherData, null, 2)}
     `;
 
     const modelsToTry = [
+      "gemini-2.5-pro",
       "gemini-2.5-flash",
       "gemini-2.5-flash-lite",
       "gemini-2.0-flash",
@@ -77,6 +81,7 @@ export async function POST(request: Request) {
     ];
 
     let summary: string | null = null;
+    let modelUsed: string | null = null;
 
     for (const modelName of modelsToTry) {
       try {
@@ -88,25 +93,26 @@ export async function POST(request: Request) {
 
         if (text) {
           summary = text;
+          modelUsed = modelName;
           console.log(`[AI AGENT] Sucesso com o modelo: ${modelName}`);
           break; 
         }
-      } catch (error) {
-        console.warn(`[AI AGENT] Falha ao usar o modelo ${modelName}. Tentando o próximo...`);
+      } catch (error) { // O ESLint reclamava que 'error' não era usado, então adicionamos um console.warn
+        console.warn(`[AI AGENT] Falha ao usar o modelo ${modelName}. Tentando o próximo...`, error);
       }
     }
 
-    if (summary) {
-      // 5. Salvar o novo resumo no cache antes de retornar
-      await redis.set(cacheKey, summary, { ex: CACHE_TTL });
+    if (summary && modelUsed) {
+      const responseData = { summary, modelUsed };
+      await redis.set(cacheKey, JSON.stringify(responseData), { ex: CACHE_TTL });
       console.log(`[AI AGENT] Novo resumo salvo no cache por ${CACHE_TTL} segundos.`);
-      return NextResponse.json({ summary });
+      return NextResponse.json(responseData);
     } else {
       console.error("[AI AGENT] Todos os modelos da lista de fallback falharam.");
       return NextResponse.json({ message: "O serviço de IA está indisponível no momento. Tente novamente mais tarde." }, { status: 503 });
     }
 
-  } catch (error) {
+  } catch (error) { // O ESLint reclamava que 'error' não era usado, então adicionamos um console.error
     console.error("Erro geral na rota /api/aiagent:", error);
     return NextResponse.json({ message: "Erro ao processar a requisição." }, { status: 500 });
   }

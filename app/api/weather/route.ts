@@ -8,19 +8,32 @@ const CACHE_TTL = 1800;
 async function fetchAndProcessWeatherData(
   city: string,
   state: string,
-  dayOffset: string
+  dayOffset: string,
+  lat?: number,
+  lon?: number
 ): Promise<WeatherInfo | null> {
-    const geoRes = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=pt&format=json`
-    );
-    if (!geoRes.ok) return null;
-    const geoJson = await geoRes.json();
-    if (!geoJson.results || geoJson.results.length === 0) return null;
-    const { latitude, longitude } = geoJson.results[0];
+    
+    let latitude = lat;
+    let longitude = lon;
 
-    // ADICIONADO: 'precipitation_probability_max' aos parâmetros 'daily'
+    if (!latitude || !longitude) {
+      console.log(`[GEOCODING] Coordenadas não fornecidas para ${city}. Buscando na API...`);
+      const geoRes = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=pt&format=json`
+      );
+      if (!geoRes.ok) return null;
+      const geoJson = await geoRes.json();
+      if (!geoJson.results || geoJson.results.length === 0) return null;
+      
+      latitude = geoJson.results[0].latitude;
+      longitude = geoJson.results[0].longitude;
+    } else {
+      console.log(`[GEOCODING] Usando coordenadas pré-definidas para ${city}.`);
+    }
+
+    // CORREÇÃO: Adicionado 'current=temperature_2m' para a temperatura ATUAL
     const weatherRes = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,windspeed_10m_max&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5&current=temperature_2m`
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,windspeed_10m_max&hourly=precipitation,weathercode&current=temperature_2m&wind_speed_unit=kmh&timezone=auto&forecast_days=5`
     );
     if (!weatherRes.ok) return null;
     const weatherJson = await weatherRes.json();
@@ -43,20 +56,23 @@ async function fetchAndProcessWeatherData(
         max: Math.round(dailyData.temperature_2m_max[offset]),
         min: Math.round(dailyData.temperature_2m_min[offset]),
         rain: parseFloat(dailyData.precipitation_sum[offset].toFixed(2)),
-        // ADICIONADO: Nova propriedade com a probabilidade de chuva
         rainProbability: dailyData.precipitation_probability_max[offset],
         wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
         code: dailyData.weathercode[offset],
         rainHours: rainHours,
+        // CORREÇÃO: Usando a temperatura ATUAL do campo 'current' apenas para o dia de hoje
         currentTemperature: offset === 0 ? Math.round(weatherJson.current.temperature_2m) : undefined,
     };
 }
 
+// O GET continua o mesmo
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get('city');
   const state = searchParams.get('state');
   const dayOffset = searchParams.get('dayOffset');
+  const lat = searchParams.get('lat');
+  const lon = searchParams.get('lon');
 
   if (!city || !state || !dayOffset) {
     return NextResponse.json({ message: 'Parâmetros inválidos' }, { status: 400 });
@@ -70,7 +86,10 @@ export async function GET(request: Request) {
       return NextResponse.json(cachedData);
     }
 
-    const weatherData = await fetchAndProcessWeatherData(city, state, dayOffset);
+    const latNum = lat ? parseFloat(lat) : undefined;
+    const lonNum = lon ? parseFloat(lon) : undefined;
+
+    const weatherData = await fetchAndProcessWeatherData(city, state, dayOffset, latNum, lonNum);
     if (!weatherData) {
       return NextResponse.json({ message: `Não foi possível obter dados para ${city}, ${state}` }, { status: 500 });
     }

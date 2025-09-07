@@ -8,12 +8,12 @@ import WeatherCard from "./components/weather/WeatherCard";
 import LoadingIndicator from "./components/LoadingIndicator";
 import { INITIAL_CITIES } from "@/constants";
 import { fetchProcessedWeatherData } from "@/services/weatherService";
-import type { WeatherInfo } from "@/types/weather";
+import type { WeatherInfo, City } from "@/types/weather"; // Importando City
 import { AiSummaryModal } from "./components/AiSummaryModal/AiSummaryModal";
 import { FiZap } from 'react-icons/fi';
 
 export default function Home() {
-  const [cities, setCities] = useState(INITIAL_CITIES);
+  const [cities, setCities] = useState<City[]>(INITIAL_CITIES); // Usando o tipo City
   const [dayOffset, setDayOffset] = useState("0");
   const [weatherData, setWeatherData] = useState<{ [key: string]: WeatherInfo; }>({});
   const [newCity, setNewCity] = useState("");
@@ -24,6 +24,7 @@ export default function Home() {
   
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [aiSummary, setAiSummary] = useState("");
+  const [modelUsed, setModelUsed] = useState(""); // Novo estado para o modelo
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   useEffect(() => {
@@ -72,9 +73,9 @@ export default function Home() {
     setIsAiModalOpen(true);
     setIsAiLoading(true);
     setAiSummary("");
+    setModelUsed(""); // Limpa o nome do modelo antigo
 
     try {
-      // ALTERADO: Adicionado 'dayOffset' ao corpo da requisição
       const response = await fetch('/api/aiagent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,6 +91,7 @@ export default function Home() {
       
       const result = await response.json();
       setAiSummary(result.summary);
+      setModelUsed(result.modelUsed); // Guarda o nome do modelo retornado
 
     } catch (error) {
       const errorMessage = (error as Error).message;
@@ -147,6 +149,7 @@ export default function Home() {
         isOpen={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
         summary={aiSummary}
+        modelUsed={modelUsed}
         isLoading={isAiLoading}
       />
     </main>
