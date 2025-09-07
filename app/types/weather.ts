@@ -1,3 +1,5 @@
+// app/types/weather.ts
+
 // Tipagem da resposta da API OpenWeatherMap
 export interface ForecastItem {
   dt: number;
@@ -34,4 +36,5 @@ export interface WeatherInfo {
   wind: number;
   code: number;
   rainHours: { hour: number; rain: number }[];
+  currentTemperature?: number;
 }

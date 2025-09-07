@@ -10,8 +10,6 @@ async function fetchAndProcessWeatherData(
   state: string,
   dayOffset: string
 ): Promise<WeatherInfo | null> {
-    // ... (toda a lógica da função fetchAndProcessWeatherData permanece a mesma)
-    // Apenas para contextualizar, esta é a função que busca e processa os dados da Open-Meteo
     const geoRes = await fetch(
         `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=pt&format=json`
     );
@@ -20,9 +18,8 @@ async function fetchAndProcessWeatherData(
     if (!geoJson.results || geoJson.results.length === 0) return null;
     const { latitude, longitude } = geoJson.results[0];
 
-    // CORREÇÃO: Adicionado 'windspeed_10m_max' aos parâmetros 'daily'
     const weatherRes = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5`
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&hourly=precipitation,weathercode&wind_speed_unit=kmh&timezone=auto&forecast_days=5&current=temperature_2m`
     );
     if (!weatherRes.ok) return null;
     const weatherJson = await weatherRes.json();
@@ -48,6 +45,7 @@ async function fetchAndProcessWeatherData(
         wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
         code: dailyData.weathercode[offset],
         rainHours: rainHours,
+        currentTemperature: offset === 0 ? Math.round(weatherJson.current.temperature_2m) : undefined,
     };
 }
 
@@ -64,7 +62,6 @@ export async function GET(request: Request) {
   const cacheKey = `weather:${city}:${state}:${dayOffset}`;
 
   try {
-    // Correção: O cliente redis já retorna o objeto JSON, não precisa de parse.
     const cachedData = await redis.get<WeatherInfo>(cacheKey);
     if (cachedData) {
       return NextResponse.json(cachedData);
@@ -72,17 +69,14 @@ export async function GET(request: Request) {
 
     const weatherData = await fetchAndProcessWeatherData(city, state, dayOffset);
     if (!weatherData) {
-      // Retorna um erro mais claro que pode ser tratado no frontend
       return NextResponse.json({ message: `Não foi possível obter dados para ${city}, ${state}` }, { status: 500 });
     }
 
-    // `await` não é necessário no set para não bloquear a resposta
     redis.set(cacheKey, JSON.stringify(weatherData), { ex: CACHE_TTL });
     return NextResponse.json(weatherData);
 
   } catch (error) {
     console.error(`[API ERRO] para ${city}:`, error);
-    // Correção: Padroniza o retorno de erro para sempre ser um JSON válido.
     const message = error instanceof Error ? error.message : 'Erro desconhecido no servidor.';
     return NextResponse.json({ message }, { status: 500 });
   }

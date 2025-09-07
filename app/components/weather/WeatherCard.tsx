@@ -27,29 +27,32 @@ export default function WeatherCard({
   }, [isAllChartsOpen]);
 
   return (
-    // Mantendo a classe principal original "weather-card"
     <div className="weather-card">
       <div className="card-header">
         <h2 className="city-name">
           {city.name}
-          {/* O ícone novo é usado aqui, dentro da estrutura antiga */}
           <span style={{ marginLeft: '10px', verticalAlign: 'middle' }}>
             <WeatherIcon code={city.code} size={28} title={weatherDescription} />
           </span>
         </h2>
-        <button onClick={() => onRemove(city.name)} className="remove-btn">
-          <X size={24} />
-        </button>
+        <div className="card-header-right">
+          {typeof city.currentTemperature === 'number' && (
+            <span className="current-temp">
+              {city.currentTemperature}°
+            </span>
+          )}
+          <button onClick={() => onRemove(city.name)} className="remove-btn">
+            <X size={24} />
+          </button>
+        </div>
       </div>
 
-      {/* Mantendo a classe "card-body" e a estrutura dos parágrafos */}
       <div className="card-body">
         <p>🌡️ Máx: {city.max}°C / Mín: {city.min}°C</p>
         <p>💧 Chuva: {city.rain} mm</p>
         <p>💨 Vento: {city.wind || 0} km/h</p>
       </div>
 
-      {/* Mantendo a estrutura do botão e do container do gráfico */}
       {city.rainHours && city.rainHours.length > 0 && (
         <div className="rain-hours">
           <button

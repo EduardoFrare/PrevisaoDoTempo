@@ -435,6 +435,18 @@ main {
   padding-top: 100px;
 }
 
+.card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espaçamento entre a temperatura e o botão 'X' */
+}
+
+.current-temp {
+  font-size: 1.25rem; /* Mesmo tamanho da fonte do nome da cidade */
+  font-weight: 700; /* Mesmo peso da fonte do nome da cidade */
+  color: var(--text-primary);
+}
+
 /* --- ANIMAÇÃO DE BOUNCE (se precisar) --- */
 @keyframes bounce {
   0%, 100% {
