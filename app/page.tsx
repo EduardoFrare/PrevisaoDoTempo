@@ -9,6 +9,8 @@ import LoadingIndicator from "./components/LoadingIndicator";
 import { INITIAL_CITIES } from "@/constants";
 import { fetchProcessedWeatherData } from "@/services/weatherService";
 import type { WeatherInfo } from "@/types/weather";
+import { AiSummaryModal } from "./components/AiSummaryModal/AiSummaryModal";
+import { FiZap } from 'react-icons/fi';
 
 export default function Home() {
   const [cities, setCities] = useState(INITIAL_CITIES);
@@ -19,6 +21,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [areAllChartsOpen, setAreAllChartsOpen] = useState(false);
+  
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiSummary, setAiSummary] = useState("");
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   useEffect(() => {
     async function fetchWeather() {
@@ -61,20 +67,46 @@ export default function Home() {
     const [cityName] = cityNameWithState.split(",");
     setCities(cities.filter((c) => c.name.toLowerCase() !== cityName.toLowerCase()));
   }
-  
-  function toggleAllCharts() {
-    setAreAllChartsOpen(!areAllChartsOpen);
+
+  async function handleGenerateSummary() {
+    setIsAiModalOpen(true);
+    setIsAiLoading(true);
+    setAiSummary("");
+
+    try {
+      // ALTERADO: Adicionado 'dayOffset' ao corpo da requisição
+      const response = await fetch('/api/aiagent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          weatherData: Object.values(weatherData),
+          dayOffset: dayOffset 
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao se comunicar com o Agente de IA.");
+      }
+      
+      const result = await response.json();
+      setAiSummary(result.summary);
+
+    } catch (error) {
+      const errorMessage = (error as Error).message;
+      setAiSummary(`Ocorreu um erro: ${errorMessage}`);
+    } finally {
+      setIsAiLoading(false);
+    }
   }
 
   return (
-    // A classe agora é aplicada aqui no <main>
     <main className={isPanelOpen ? 'panel-open' : ''}>
       <HeaderBar
         dayOffset={dayOffset}
         onDayChange={setDayOffset}
         onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
         isPanelOpen={isPanelOpen}
-        onToggleAllCharts={toggleAllCharts}
+        onToggleAllCharts={() => setAreAllChartsOpen(!areAllChartsOpen)}
         areAllChartsOpen={areAllChartsOpen}
       />
       
@@ -86,7 +118,6 @@ export default function Home() {
         errorMsg={errorMsg}
       />
 
-      {/* A div interna agora é mais simples */}
       <div className="app-container">
         {isLoading ? (
           <LoadingIndicator />
@@ -103,6 +134,21 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      <button 
+        onClick={handleGenerateSummary} 
+        className="ai-floating-button" 
+        title="Gerar Resumo da IA"
+      >
+        <FiZap size={24} />
+      </button>
+
+      <AiSummaryModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        summary={aiSummary}
+        isLoading={isAiLoading}
+      />
     </main>
   );
 }

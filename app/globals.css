@@ -186,10 +186,9 @@ main.panel-open {
 
 .weather-info {
   display: flex;
-  align-items: center;
+  align-items: center; /* A mágica para centralizar verticalmente */
   gap: 8px;
   font-size: 1.5rem;
-  font-weight: 700;
 }
 
 .card-header {
@@ -209,6 +208,15 @@ main.panel-open {
   margin-left: 8px;
   vertical-align: middle;
 }
+
+.current-temp {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-left: 16px;
+}
+
 .card-body {
   padding: 0 20px;
 }
@@ -227,7 +235,7 @@ main.panel-open {
   cursor: pointer;
   padding: 10px 0;
   width: 100%;
-  font-weight: 700;
+  font-weight: 500;
   border-top: 1px solid var(--border-color);
   text-align: center;
   display: flex;
@@ -453,4 +461,29 @@ main.panel-open {
 .footer-content a:hover {
   color: var(--accent-color);
   text-decoration: underline;
+}
+
+/* --- ESTILOS PARA O BOTÃO FLUTUANTE DE IA --- */
+.ai-floating-button {
+  position: fixed;
+  bottom: 25px; /* Distância do fundo */
+  right: 25px; /* Distância da direita */
+  background-color: var(--accent-color);
+  color: var(--white);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%; /* Deixa o botão redondo */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px var(--shadow-color-light);
+  cursor: pointer;
+  z-index: 1050; /* Garante que fique acima dos cards */
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.ai-floating-button:hover {
+  background-color: var(--accent-color-hover);
+  transform: scale(1.1); /* Efeito de crescimento ao passar o mouse */
 }
