@@ -17,12 +17,17 @@ const getDayName = (offset: string): string => {
   return `para ${dayOfWeek}`;
 };
 
-// CORREÇÃO: Trocamos 'any' por 'unknown' para seguir as regras do ESLint
-const createDataFingerprint = (data: unknown): string => {
-  const dataString = JSON.stringify(data);
+// CORREÇÃO: A função agora usa apenas os nomes das cidades para criar a chave,
+// garantindo que ela seja consistente para o mesmo conjunto de cidades.
+const createDataFingerprint = (data: WeatherInfo[]): string => {
+  // Extrai os nomes das cidades, ordena para garantir a mesma ordem sempre,
+  // e junta em uma string única.
+  const cityNames = data.map(cityInfo => cityInfo.name).sort().join(',');
+
+  // O resto da lógica para gerar o checksum a partir da string de nomes.
   let checksum = 0;
-  for (let i = 0; i < dataString.length; i++) {
-    checksum = (checksum + dataString.charCodeAt(i) * (i + 1)) % 1000000;
+  for (let i = 0; i < cityNames.length; i++) {
+    checksum = (checksum + cityNames.charCodeAt(i) * (i + 1)) % 1000000;
   }
   return checksum.toString();
 };
@@ -38,6 +43,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Dados do tempo não fornecidos." }, { status: 400 });
     }
 
+    // Nenhuma mudança necessária aqui, a função já foi corrigida acima.
     const dataFingerprint = createDataFingerprint(weatherData);
     const cacheKey = `summary:${dayOffset}:${dataFingerprint}`;
 
@@ -97,7 +103,7 @@ export async function POST(request: Request) {
           console.log(`[AI AGENT] Sucesso com o modelo: ${modelName}`);
           break; 
         }
-      } catch (error) { // O ESLint reclamava que 'error' não era usado, então adicionamos um console.warn
+      } catch (error) { 
         console.warn(`[AI AGENT] Falha ao usar o modelo ${modelName}. Tentando o próximo...`, error);
       }
     }
@@ -112,7 +118,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "O serviço de IA está indisponível no momento. Tente novamente mais tarde." }, { status: 503 });
     }
 
-  } catch (error) { // O ESLint reclamava que 'error' não era usado, então adicionamos um console.error
+  } catch (error) { 
     console.error("Erro geral na rota /api/aiagent:", error);
     return NextResponse.json({ message: "Erro ao processar a requisição." }, { status: 500 });
   }
