@@ -9,17 +9,15 @@ async function fetchAndProcessWeatherData(
   city: string,
   state: string,
   dayOffset: string,
-  lat?: number,
-  lon?: number
+  latitude: number,
+  longitude: number
 ): Promise<WeatherInfo | null> {
-    
-    let latitude = lat;
-    let longitude = lon;
+
 
     if (!latitude || !longitude) {
       console.log(`[GEOCODING] Coordenadas não fornecidas para ${city}. Buscando na API...`);
       const geoRes = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=pt&format=json`
+          `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=pt&format=jsonCode=BR`
       );
       if (!geoRes.ok) return null;
       const geoJson = await geoRes.json();
@@ -60,7 +58,6 @@ async function fetchAndProcessWeatherData(
         wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
         code: dailyData.weathercode[offset],
         rainHours: rainHours,
-        // CORREÇÃO: Usando a temperatura ATUAL do campo 'current' apenas para o dia de hoje
         currentTemperature: offset === 0 ? Math.round(weatherJson.current.temperature_2m) : undefined,
     };
 }
@@ -71,8 +68,8 @@ export async function GET(request: Request) {
   const city = searchParams.get('city');
   const state = searchParams.get('state');
   const dayOffset = searchParams.get('dayOffset');
-  const lat = searchParams.get('lat');
-  const lon = searchParams.get('lon');
+  const latitude = searchParams.get('lat');
+  const longitude = searchParams.get('lon');
 
   if (!city || !state || !dayOffset) {
     return NextResponse.json({ message: 'Parâmetros inválidos' }, { status: 400 });
@@ -86,8 +83,8 @@ export async function GET(request: Request) {
       return NextResponse.json(cachedData);
     }
 
-    const latNum = lat ? parseFloat(lat) : undefined;
-    const lonNum = lon ? parseFloat(lon) : undefined;
+    const latNum = latitude ? parseFloat(latitude) : undefined;
+    const lonNum = longitude ? parseFloat(longitude) : undefined;
 
     const weatherData = await fetchAndProcessWeatherData(city, state, dayOffset, latNum, lonNum);
     if (!weatherData) {
