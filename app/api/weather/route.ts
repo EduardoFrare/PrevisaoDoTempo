@@ -60,6 +60,8 @@ async function fetchAndProcessWeatherData(
         wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
         code: dailyData.weathercode[offset],
         rainHours: rainHours,
+        lat: latitude,
+        lon: longitude,
         // CORREÇÃO: Usando a temperatura ATUAL do campo 'current' apenas para o dia de hoje
         currentTemperature: offset === 0 ? Math.round(weatherJson.current.temperature_2m) : undefined,
     };
