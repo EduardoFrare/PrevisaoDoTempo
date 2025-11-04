@@ -1,12 +1,17 @@
 // app/services/weatherService.ts
-import type { WeatherInfo } from "@/types/weather"; // CAMINHO CORRIGIDO
+import type { WeatherInfo, City } from "@/types/weather";
 
 export async function fetchProcessedWeatherData(
-  cities: { name: string; state: string }[],
+  cities: City[],
   dayOffset: string
 ): Promise<{ [key: string]: WeatherInfo }> {
-  const weatherPromises = cities.map(city =>
-    fetch(`/api/weather?city=${city.name}&state=${city.state}&dayOffset=${dayOffset}`)
+  const weatherPromises = cities.map(city => {
+    let url = `/api/weather?city=${city.name}&state=${city.state}&dayOffset=${dayOffset}`;
+    if (city.lat && city.lon) {
+      url += `&lat=${city.lat}&lon=${city.lon}`;
+    }
+
+    return fetch(url)
       .then(res => {
         if (!res.ok) {
           console.warn(`Falha ao buscar dados para ${city.name} do nosso backend.`);
@@ -14,8 +19,8 @@ export async function fetchProcessedWeatherData(
         }
         return res.json();
       })
-      .then(data => ({ city, data }))
-  );
+      .then(data => ({ city, data }));
+  });
 
   const results = await Promise.all(weatherPromises);
 
