@@ -1,6 +1,6 @@
 {
   "name": "cardsclima",
-  "version": "5.0.0",
+  "version": "5.0.1 - Atualização do Resumo 🔎",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

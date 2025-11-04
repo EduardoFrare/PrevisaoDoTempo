@@ -109,11 +109,8 @@ export default function Home() {
 
   const calculatePaddingTop = () => {
     let paddingTop = 60; // Base padding for the header
-    if (isPanelOpen) {
+   if (isPanelOpen) {
       paddingTop += 85; // Height of the AddCityPanel
-    }
-    if (isTickerOpen) {
-      paddingTop += 49; // Precise height of the WeatherTicker (48px + 1px border)
     }
     return `${paddingTop}px`;
   };

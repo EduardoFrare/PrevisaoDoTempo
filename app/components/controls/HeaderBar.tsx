@@ -57,11 +57,11 @@ export function HeaderBar({
       </div>
       <div className="header-actions">
         <button onClick={onToggleTicker} className="toggle-all-charts-btn">
-          <span>{isTickerOpen ? 'Fechar Ticker' : 'Abrir Ticker'}</span>
+          <span>{isTickerOpen ? 'Fechar Resumo' : 'Resumo do Tempo'}</span>
         </button>
         <button onClick={onToggleAllCharts} className="toggle-all-charts-btn">
+          <span>{areAllChartsOpen ? 'Fechar' : 'Mostrar Chuva'}</span>
           {areAllChartsOpen ? <FiChevronUp /> : <FiChevronDown />}
-          <span>{areAllChartsOpen ? 'Fechar' : 'Abrir'}</span>
         </button>
       </div>
     </header>

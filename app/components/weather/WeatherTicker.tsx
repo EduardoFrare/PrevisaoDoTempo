@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { WeatherInfo } from "@/types/weather";
 import { getWeatherDescription } from "@/services/weatherService";
 import { WeatherIcon } from "./WeatherIcon";
+import { LuWind } from "react-icons/lu";
 import "./WeatherTicker.css";
 
 type WeatherTickerProps = {
@@ -35,7 +36,7 @@ export default function WeatherTicker({ cities }: WeatherTickerProps) {
               <span className="city-name">{city.name}</span>
               <WeatherIcon code={city.code} size={24} title={weatherDescription} />
               <span className="temperature">{city.currentTemperature}°C</span>
-              <span className="wind">💨 {city.wind || 0} km/h</span>
+              <span className="wind"><LuWind className="windIcon" size={24} /> {city.wind || 0} km/h</span>
             </div>
           );
         })}
