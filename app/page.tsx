@@ -104,7 +104,7 @@ export default function Home() {
   }
 
   const initialCitiesData = Object.values(weatherData).filter(city =>
-    INITIAL_CITIES.some(initialCity => initialCity.name === city.name)
+    INITIAL_CITIES.some(initialCity => city.name.startsWith(initialCity.name))
   );
 
   const calculatePaddingTop = () => {
