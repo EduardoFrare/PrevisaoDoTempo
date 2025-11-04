@@ -1,3 +1,6 @@
+/**
+ * Represents a city with its name, state, and optional coordinates.
+ */
 export interface City {
   name: string;
   state: string;
@@ -5,6 +8,9 @@ export interface City {
   lon?: number; // Longitude é opcional
 }
 
+/**
+ * An array of initial cities to display when the application loads.
+ */
 export const INITIAL_CITIES: City[] = [
   { name: 'Chapeco', state: 'SC', lat: -27.10, lon: -52.61 },
   { name: 'Passo Fundo', state: 'RS', lat: -28.26, lon: -52.40 },

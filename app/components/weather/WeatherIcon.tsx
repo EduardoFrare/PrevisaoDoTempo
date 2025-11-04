@@ -18,6 +18,13 @@ interface WeatherIconProps extends LucideProps {
   title?: string;
 }
 
+/**
+ * A component that displays a weather icon based on a weather code.
+ * @param {object} props - The component props.
+ * @param {number} props.code - The weather code.
+ * @param {string} [props.title] - The title for the icon (used for tooltips).
+ * @returns The appropriate weather icon component.
+ */
 export const WeatherIcon: React.FC<WeatherIconProps> = ({
   code,
   ...props

@@ -1,6 +1,10 @@
 // app/types/weather.ts
 
-// Tipagem de uma API mais antiga, como OpenWeatherMap (mantida para referência)
+/**
+ * Represents a single forecast item from an older weather API (e.g., OpenWeatherMap).
+ * This is kept for reference.
+ * @deprecated
+ */
 export interface ForecastItem {
   dt: number;
   dt_txt: string;
@@ -19,6 +23,11 @@ export interface ForecastItem {
   };
 }
 
+/**
+ * Represents the response from an older weather API (e.g., OpenWeatherMap).
+ * This is kept for reference.
+ * @deprecated
+ */
 export interface WeatherApiResponse {
   cod: string;
   list: ForecastItem[];
@@ -27,7 +36,9 @@ export interface WeatherApiResponse {
   };
 }
 
-// Tipagem dos nossos dados já processados e usados no app
+/**
+ * Represents the processed weather information used throughout the application.
+ */
 export interface WeatherInfo {
   name: string;
   max: number;
@@ -42,7 +53,9 @@ export interface WeatherInfo {
   lon?: number;
 }
 
-// Nova tipagem para as cidades, permitindo coordenadas opcionais
+/**
+ * Represents a city with its name, state, and optional coordinates.
+ */
 export interface City {
   name: string;
   state: string;

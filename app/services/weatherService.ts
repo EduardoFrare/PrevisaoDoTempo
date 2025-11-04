@@ -1,6 +1,14 @@
 // app/services/weatherService.ts
 import type { WeatherInfo, City } from "@/types/weather";
 
+/**
+ * Fetches and processes weather data for a list of cities.
+ * It makes parallel requests to the weather API for each city.
+ * @param cities - An array of city objects to fetch weather data for.
+ * @param dayOffset - The number of days from today for the forecast.
+ * @returns A Promise that resolves to an object where the keys are city names
+ * and the values are the corresponding WeatherInfo objects.
+ */
 export async function fetchProcessedWeatherData(
   cities: City[],
   dayOffset: string
@@ -34,6 +42,11 @@ export async function fetchProcessedWeatherData(
   return weatherData;
 }
 
+/**
+ * Gets the description for a given weather code.
+ * @param code - The weather code.
+ * @returns A string describing the weather condition.
+ */
 export const getWeatherDescription = (code: number) => {
   const weatherCodes: { [key: number]: string } = {
     0: 'Céu limpo',

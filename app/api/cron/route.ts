@@ -2,6 +2,13 @@
 import { NextResponse } from 'next/server';
 import { INITIAL_CITIES } from '@/constants';
 
+/**
+ * Handles GET requests to the cron job API.
+ * This endpoint is designed to be called by a cron job to warm up the weather cache
+ * for the initial set of cities. It is protected by a secret key in production.
+ * @param request - The incoming HTTP request.
+ * @returns A JSON response indicating the success or failure of the cache warming process.
+ */
 export async function GET(request: Request) {
   // Protege a rota com o segredo
   const authHeader = request.headers.get('authorization');

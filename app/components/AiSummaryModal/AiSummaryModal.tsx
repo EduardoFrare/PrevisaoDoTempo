@@ -13,6 +13,18 @@ type AiSummaryModalProps = {
   isLoading: boolean;
 };
 
+/**
+ * A modal component to display the AI-generated summary.
+ * It shows a loading indicator while the summary is being generated
+ * and displays the summary and the model used once it's available.
+ * @param {object} props - The component props.
+ * @param {boolean} props.isOpen - Whether the modal is open.
+ * @param {() => void} props.onClose - Function to call when the modal is closed.
+ * @param {string} props.summary - The AI-generated summary to display.
+ * @param {string} props.modelUsed - The name of the AI model used to generate the summary.
+ * @param {boolean} props.isLoading - Whether the summary is currently being loaded.
+ * @returns The modal component or null if it's not open.
+ */
 export function AiSummaryModal({ isOpen, onClose, summary, modelUsed, isLoading }: AiSummaryModalProps) {
   if (!isOpen) return null;
 

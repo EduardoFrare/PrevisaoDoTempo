@@ -17,6 +17,14 @@ export const metadata: Metadata = {
   description: "Cards fáceis para visualização de previsão do tempo.",
 };
 
+/**
+ * The root layout for the application.
+ * It sets up the HTML structure, includes the Poppins font, and wraps the content in a site wrapper.
+ * It also includes Vercel's Speed Insights and Analytics.
+ * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components to render.
+ * @returns The root layout component.
+ */
 export default function RootLayout({
   children,
 }: {

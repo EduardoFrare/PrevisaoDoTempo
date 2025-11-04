@@ -12,6 +12,12 @@ type WeatherTickerProps = {
   cities: WeatherInfo[];
 };
 
+/**
+ * A component that displays a horizontally scrolling ticker of weather information for multiple cities.
+ * @param {object} props - The component props.
+ * @param {WeatherInfo[]} props.cities - An array of weather information objects for the cities to display.
+ * @returns The WeatherTicker component.
+ */
 export default function WeatherTicker({ cities }: WeatherTickerProps) {
   const [tickerCities, setTickerCities] = useState<WeatherInfo[]>([]);
 

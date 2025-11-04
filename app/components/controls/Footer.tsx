@@ -1,3 +1,8 @@
+/**
+ * The footer component for the application.
+ * It displays a link to the weather data source and the application version.
+ * @returns The Footer component.
+ */
 export default function Footer() {
   return (
     <footer className="footer-bar">

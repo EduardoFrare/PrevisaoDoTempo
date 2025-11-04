@@ -6,6 +6,11 @@ import { redis } from "@/lib/redis";
 const CACHE_TTL = 1800;
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
 
+/**
+ * Gets the name of the day based on an offset from the current date.
+ * @param offset - The number of days from today (0 for today, 1 for tomorrow, etc.).
+ * @returns The name of the day (e.g., "hoje", "amanhã", "para segunda-feira").
+ */
 const getDayName = (offset: string): string => {
   const offsetNum = parseInt(offset, 10);
   if (offsetNum === 0) return "hoje";
@@ -17,8 +22,12 @@ const getDayName = (offset: string): string => {
   return `para ${dayOfWeek}`;
 };
 
-// CORREÇÃO: A função agora usa apenas os nomes das cidades para criar a chave,
-// garantindo que ela seja consistente para o mesmo conjunto de cidades.
+/**
+ * Creates a unique fingerprint for a set of weather data based on city names.
+ * This ensures that the same set of cities always produces the same fingerprint.
+ * @param data - An array of weather information objects.
+ * @returns A string representing the unique fingerprint of the data.
+ */
 const createDataFingerprint = (data: WeatherInfo[]): string => {
   // Extrai os nomes das cidades, ordena para garantir a mesma ordem sempre,
   // e junta em uma string única.
@@ -32,11 +41,17 @@ const createDataFingerprint = (data: WeatherInfo[]): string => {
   return checksum.toString();
 };
 
+/**
+ * Handles POST requests to the AI agent API.
+ * It generates a weather summary using Google's Generative AI and caches the result.
+ * @param request - The incoming HTTP request.
+ * @returns A JSON response with the AI-generated summary or an error message.
+ */
 export async function POST(request: Request) {
   try {
-    const { weatherData, dayOffset } = (await request.json()) as { 
+    const { weatherData, dayOffset } = (await request.json()) as {
       weatherData: WeatherInfo[],
-      dayOffset: string 
+      dayOffset: string
     };
     
     if (!weatherData || weatherData.length === 0) {

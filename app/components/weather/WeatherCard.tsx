@@ -14,6 +14,16 @@ type WeatherCardProps = {
   isAllChartsOpen: boolean;
 };
 
+/**
+ * A card component that displays the weather information for a single city.
+ * It includes the city name, temperature, rain, wind, and a chart of hourly rain data.
+ * It also has a button to remove the city from the list.
+ * @param {object} props - The component props.
+ * @param {WeatherInfo} props.city - The weather information for the city.
+ * @param {(cityName: string) => void} props.onRemove - Function to call when the city is removed.
+ * @param {boolean} props.isAllChartsOpen - Whether all rain charts are open.
+ * @returns The WeatherCard component.
+ */
 export default function WeatherCard({
   city,
   onRemove,

@@ -12,6 +12,12 @@ interface RainChartProps {
   rainHours: RainHour[];
 }
 
+/**
+ * A component that displays a bar chart of hourly rain data.
+ * @param {object} props - The component props.
+ * @param {RainHour[]} props.rainHours - An array of objects, each containing the hour and the amount of rain.
+ * @returns The RainChart component.
+ */
 export default function RainChart({ rainHours }: RainChartProps) {
   const maxRain = Math.max(...rainHours.map(h => h.rain), 1);
 

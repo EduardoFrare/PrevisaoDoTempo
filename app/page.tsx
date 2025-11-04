@@ -13,6 +13,12 @@ import type { WeatherInfo, City } from "@/types/weather"; // Importando City
 import { AiSummaryModal } from "./components/AiSummaryModal/AiSummaryModal";
 import { FiZap } from 'react-icons/fi';
 
+/**
+ * The main page of the application.
+ * It displays the weather cards, controls for adding cities and changing the day,
+ * and a button to generate an AI-powered summary.
+ * @returns The Home page component.
+ */
 export default function Home() {
   const [cities, setCities] = useState<City[]>(INITIAL_CITIES); // Usando o tipo City
   const [dayOffset, setDayOffset] = useState("0");

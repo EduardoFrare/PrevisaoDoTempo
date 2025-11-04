@@ -13,6 +13,11 @@ interface HeaderBarProps {
   isTickerOpen: boolean;
 }
 
+/**
+ * Formats a date based on an offset from the current date.
+ * @param offset - The number of days from today.
+ * @returns A formatted date string (e.g., "Seg (01-01)").
+ */
 const getFormattedDate = (offset: number): string => {
   const date = new Date();
   date.setDate(date.getDate() + offset);
@@ -23,6 +28,21 @@ const getFormattedDate = (offset: number): string => {
   return `${capitalizedDay} (${day}-${month})`;
 };
 
+/**
+ * The header bar component for the application.
+ * It contains the day selector, a button to toggle the "Add City" panel,
+ * and buttons to toggle the rain charts and the weather ticker.
+ * @param {object} props - The component props.
+ * @param {string} props.dayOffset - The currently selected day offset.
+ * @param {(value: string) => void} props.onDayChange - Function to call when the selected day changes.
+ * @param {() => void} props.onTogglePanel - Function to call when the "Add City" panel is toggled.
+ * @param {boolean} props.isPanelOpen - Whether the "Add City" panel is open.
+ * @param {() => void} props.onToggleAllCharts - Function to call when the rain charts are toggled.
+ * @param {boolean} props.areAllChartsOpen - Whether the rain charts are open.
+ * @param {() => void} props.onToggleTicker - Function to call when the weather ticker is toggled.
+ * @param {boolean} props.isTickerOpen - Whether the weather ticker is open.
+ * @returns The HeaderBar component.
+ */
 export function HeaderBar({
   dayOffset,
   onDayChange,

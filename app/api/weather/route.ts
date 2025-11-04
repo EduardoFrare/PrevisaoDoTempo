@@ -3,8 +3,19 @@ import { NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
 import { WeatherInfo } from '@/types/weather';
 
-const CACHE_TTL = 1800; 
+const CACHE_TTL = 1800;
 
+/**
+ * Fetches and processes weather data for a given city.
+ * It first tries to get coordinates from the request, otherwise, it uses a geocoding API.
+ * Then, it fetches the weather forecast and formats it into a WeatherInfo object.
+ * @param city - The name of the city.
+ * @param state - The state of the city.
+ * @param dayOffset - The number of days from today for the forecast.
+ * @param lat - The latitude of the city (optional).
+ * @param lon - The longitude of the city (optional).
+ * @returns A Promise that resolves to a WeatherInfo object or null if an error occurs.
+ */
 async function fetchAndProcessWeatherData(
   city: string,
   state: string,
@@ -12,7 +23,7 @@ async function fetchAndProcessWeatherData(
   lat?: number,
   lon?: number
 ): Promise<WeatherInfo | null> {
-    
+
     let latitude = lat;
     let longitude = lon;
 
@@ -67,7 +78,13 @@ async function fetchAndProcessWeatherData(
     };
 }
 
-// O GET continua o mesmo
+/**
+ * Handles GET requests to the weather API.
+ * It retrieves weather data for a specified city, either from the cache or by fetching it.
+ * The data is then cached for future requests.
+ * @param request - The incoming HTTP request.
+ * @returns A JSON response with the weather data or an error message.
+ */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get('city');

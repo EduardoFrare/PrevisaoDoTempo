@@ -1,4 +1,9 @@
 // app/components/weather/WeatherCardSkeleton.tsx
+/**
+ * A skeleton component that displays a loading state for the WeatherCard.
+ * It shows a simplified version of the card with placeholder elements.
+ * @returns The WeatherCardSkeleton component.
+ */
 export default function WeatherCardSkeleton() {
   return (
     <div className="weather-card skeleton">
