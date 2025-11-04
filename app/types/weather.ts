@@ -38,6 +38,8 @@ export interface WeatherInfo {
   code: number;
   rainHours: { hour: number; rain: number }[];
   currentTemperature?: number;
+  lat?: number;
+  lon?: number;
 }
 
 // Nova tipagem para as cidades, permitindo coordenadas opcionais
