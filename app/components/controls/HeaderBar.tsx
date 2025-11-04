@@ -9,6 +9,8 @@ interface HeaderBarProps {
   isPanelOpen: boolean;
   onToggleAllCharts: () => void;
   areAllChartsOpen: boolean;
+  onToggleTicker: () => void;
+  isTickerOpen: boolean;
 }
 
 const getFormattedDate = (offset: number): string => {
@@ -27,7 +29,9 @@ export function HeaderBar({
   onTogglePanel,
   isPanelOpen,
   onToggleAllCharts,
-  areAllChartsOpen
+  areAllChartsOpen,
+  onToggleTicker,
+  isTickerOpen
 }: HeaderBarProps) {
   return (
     <header className="header-bar">
@@ -51,10 +55,15 @@ export function HeaderBar({
           {getFormattedDate(4)}
         </button>
       </div>
-      <button onClick={onToggleAllCharts} className="toggle-all-charts-btn">
-        {areAllChartsOpen ? <FiChevronUp /> : <FiChevronDown />}
-        <span>{areAllChartsOpen ? 'Fechar' : 'Abrir'}</span>
-      </button>
+      <div className="header-actions">
+        <button onClick={onToggleTicker} className="toggle-all-charts-btn">
+          <span>{isTickerOpen ? 'Fechar Resumo' : 'Resumo do Tempo'}</span>
+        </button>
+        <button onClick={onToggleAllCharts} className="toggle-all-charts-btn">
+          <span>{areAllChartsOpen ? 'Fechar' : 'Mostrar Chuva'}</span>
+          {areAllChartsOpen ? <FiChevronUp /> : <FiChevronDown />}
+        </button>
+      </div>
     </header>
   );
 }

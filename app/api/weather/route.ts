@@ -83,8 +83,8 @@ export async function GET(request: Request) {
   const cacheKey = `weather:${city}:${state}:${dayOffset}`;
 
   try {
-    const cachedData = await redis.get<WeatherInfo>(cacheKey);
-    if (cachedData) {
+     const cachedData = await redis.get<WeatherInfo>(cacheKey);
+     if (cachedData) {
       return NextResponse.json(cachedData);
     }
 

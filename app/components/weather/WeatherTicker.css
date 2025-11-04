@@ -1,0 +1,53 @@
+/* app/components/weather/WeatherTicker.css */
+
+.weather-ticker-container {
+  background-color: var(--card-bg);
+  padding: 12px 0;
+  overflow: hidden;
+  width: 100%;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.weather-ticker {
+  display: flex;
+  animation: scroll 120s linear infinite;
+  width: max-content;
+}
+
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 25px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.ticker-item .city-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ticker-item .temperature {
+  font-weight: 600;
+}
+
+.wind {
+  display: flex;
+  align-items: center;
+}
+
+.windIcon {
+  margin-right: 4px;  
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

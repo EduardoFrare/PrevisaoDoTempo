@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { HeaderBar } from "./components/controls/HeaderBar";
 import { AddCityPanel } from "./components/controls/AddCityPanel";
 import WeatherCard from "./components/weather/WeatherCard";
+import WeatherTicker from "./components/weather/WeatherTicker";
 import LoadingIndicator from "./components/LoadingIndicator";
 import { INITIAL_CITIES } from "@/constants";
 import { fetchProcessedWeatherData } from "@/services/weatherService";
@@ -20,6 +21,7 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isTickerOpen, setIsTickerOpen] = useState(false);
   const [areAllChartsOpen, setAreAllChartsOpen] = useState(false);
   
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
@@ -101,8 +103,20 @@ export default function Home() {
     }
   }
 
+  const initialCitiesData = Object.values(weatherData).filter(city =>
+    INITIAL_CITIES.some(initialCity => city.name.startsWith(initialCity.name))
+  );
+
+  const calculatePaddingTop = () => {
+    let paddingTop = 60; // Base padding for the header
+   if (isPanelOpen) {
+      paddingTop += 85; // Height of the AddCityPanel
+    }
+    return `${paddingTop}px`;
+  };
+
   return (
-    <main className={isPanelOpen ? 'panel-open' : ''}>
+    <main style={{ paddingTop: calculatePaddingTop() }}>
       <HeaderBar
         dayOffset={dayOffset}
         onDayChange={setDayOffset}
@@ -110,8 +124,12 @@ export default function Home() {
         isPanelOpen={isPanelOpen}
         onToggleAllCharts={() => setAreAllChartsOpen(!areAllChartsOpen)}
         areAllChartsOpen={areAllChartsOpen}
+        onToggleTicker={() => setIsTickerOpen(!isTickerOpen)}
+        isTickerOpen={isTickerOpen}
       />
       
+      {isTickerOpen && <WeatherTicker cities={initialCitiesData} />}
+
       <AddCityPanel
         isOpen={isPanelOpen}
         newCity={newCity}
