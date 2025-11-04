@@ -113,7 +113,7 @@ export default function Home() {
       paddingTop += 85; // Height of the AddCityPanel
     }
     if (isTickerOpen) {
-      paddingTop += 50; // Approximate height of the WeatherTicker
+      paddingTop += 49; // Precise height of the WeatherTicker (48px + 1px border)
     }
     return `${paddingTop}px`;
   };

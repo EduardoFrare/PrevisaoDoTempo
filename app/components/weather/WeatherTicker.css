@@ -2,7 +2,7 @@
 
 .weather-ticker-container {
   background-color: var(--card-bg);
-  padding: 10px 0;
+  padding: 12px 0;
   overflow: hidden;
   width: 100%;
   border-bottom: 1px solid var(--border-color);
@@ -11,7 +11,7 @@
 
 .weather-ticker {
   display: flex;
-  animation: scroll 60s linear infinite;
+  animation: scroll 120s linear infinite;
   width: max-content;
 }
 
