@@ -9,14 +9,15 @@ import WeatherTicker from "./components/weather/WeatherTicker";
 import LoadingIndicator from "./components/LoadingIndicator";
 import { INITIAL_CITIES } from "@/constants";
 import { fetchProcessedWeatherData } from "@/services/weatherService";
-import type { WeatherInfo, City } from "@/types/weather"; // Importando City
+import type { WeatherInfo, City } from "@/types/weather";
 import { AiSummaryModal } from "./components/AiSummaryModal/AiSummaryModal";
 import { FiZap } from 'react-icons/fi';
 
 export default function Home() {
-  const [cities, setCities] = useState<City[]>(INITIAL_CITIES); // Usando o tipo City
+  const [cities, setCities] = useState<City[]>(INITIAL_CITIES);
   const [dayOffset, setDayOffset] = useState("0");
   const [weatherData, setWeatherData] = useState<{ [key: string]: WeatherInfo; }>({});
+  const [tickerData, setTickerData] = useState<WeatherInfo[]>([]);
   const [newCity, setNewCity] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,7 @@ export default function Home() {
   
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [aiSummary, setAiSummary] = useState("");
-  const [modelUsed, setModelUsed] = useState(""); // Novo estado para o modelo
+  const [modelUsed, setModelUsed] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   useEffect(() => {
@@ -47,6 +48,25 @@ export default function Home() {
     if (cities.length > 0) fetchWeather();
     else setIsLoading(false);
   }, [cities, dayOffset]);
+
+  useEffect(() => {
+    async function fetchTickerData() {
+      if (isTickerOpen) {
+        try {
+          const response = await fetch('/api/ticker');
+          if (!response.ok) {
+            throw new Error('Failed to fetch ticker data.');
+          }
+          const data = await response.json();
+          setTickerData(data);
+        } catch (error) {
+          console.error(error);
+          // Optionally, handle ticker-specific errors
+        }
+      }
+    }
+    fetchTickerData();
+  }, [isTickerOpen]);
 
   function addCity() {
     if (!newCity.trim()) return;
@@ -75,7 +95,7 @@ export default function Home() {
     setIsAiModalOpen(true);
     setIsAiLoading(true);
     setAiSummary("");
-    setModelUsed(""); // Limpa o nome do modelo antigo
+    setModelUsed("");
 
     try {
       const response = await fetch('/api/aiagent', {
@@ -93,7 +113,7 @@ export default function Home() {
       
       const result = await response.json();
       setAiSummary(result.summary);
-      setModelUsed(result.modelUsed); // Guarda o nome do modelo retornado
+      setModelUsed(result.modelUsed);
 
     } catch (error) {
       const errorMessage = (error as Error).message;
@@ -102,10 +122,6 @@ export default function Home() {
       setIsAiLoading(false);
     }
   }
-
-  const initialCitiesData = Object.values(weatherData).filter(city =>
-    INITIAL_CITIES.some(initialCity => city.name.startsWith(initialCity.name))
-  );
 
   const calculatePaddingTop = () => {
     let paddingTop = 60; // Base padding for the header
@@ -128,7 +144,7 @@ export default function Home() {
         isTickerOpen={isTickerOpen}
       />
       
-      {isTickerOpen && <WeatherTicker cities={initialCitiesData} />}
+      {isTickerOpen && <WeatherTicker cities={tickerData} />}
 
       <AddCityPanel
         isOpen={isPanelOpen}

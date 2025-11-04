@@ -67,3 +67,63 @@ export const getWeatherDescription = (code: number) => {
   };
   return weatherCodes[code] || 'Condição desconhecida';
 };
+
+export async function fetchAndProcessWeatherData(
+  city: string,
+  state: string,
+  dayOffset: string,
+  lat?: number,
+  lon?: number
+): Promise<WeatherInfo | null> {
+
+    let latitude = lat;
+    let longitude = lon;
+
+    if (!latitude || !longitude) {
+      console.log(`[GEOCODING] Coordenadas não fornecidas para ${city}. Buscando na API...`);
+      const geoRes = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=pt&format=json`
+      );
+      if (!geoRes.ok) return null;
+      const geoJson = await geoRes.json();
+      if (!geoJson.results || geoJson.results.length === 0) return null;
+
+      latitude = geoJson.results[0].latitude;
+      longitude = geoJson.results[0].longitude;
+    } else {
+      console.log(`[GEOCODING] Usando coordenadas pré-definidas para ${city}.`);
+    }
+
+    const weatherRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,windspeed_10m_max&hourly=precipitation,weathercode&current=temperature_2m&wind_speed_unit=kmh&timezone=auto&forecast_days=5`
+    );
+    if (!weatherRes.ok) return null;
+    const weatherJson = await weatherRes.json();
+    const dailyData = weatherJson.daily;
+    const hourlyData = weatherJson.hourly;
+    const offset = parseInt(dayOffset, 10);
+
+    const rainHours = hourlyData.time
+        .map((time: string, index: number) => ({
+        hour: new Date(time).getHours(),
+        rain: hourlyData.precipitation[index],
+        }))
+        .filter(
+        (_: { hour: number; rain: number }, index: number) =>
+            index >= offset * 24 && index < (offset + 1) * 24
+        );
+
+    return {
+        name: `${city}, ${state}`,
+        max: Math.round(dailyData.temperature_2m_max[offset]),
+        min: Math.round(dailyData.temperature_2m_min[offset]),
+        rain: parseFloat(dailyData.precipitation_sum[offset].toFixed(2)),
+        rainProbability: dailyData.precipitation_probability_max[offset],
+        wind: parseFloat(dailyData.windspeed_10m_max[offset].toFixed(2)),
+        code: dailyData.weathercode[offset],
+        rainHours: rainHours,
+        lat: latitude,
+        lon: longitude,
+        currentTemperature: offset === 0 ? Math.round(weatherJson.current.temperature_2m) : undefined,
+    };
+}
