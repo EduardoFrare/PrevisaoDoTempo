@@ -17,7 +17,10 @@ export async function GET(request: Request) {
   try {
     const results = await Promise.allSettled(
       INITIAL_CITIES.map(city => {
-        const url = `${baseUrl}/api/weather?city=${encodeURIComponent(city.name)}&state=${city.state}&dayOffset=0`;
+        let url = `${baseUrl}/api/weather?city=${encodeURIComponent(city.name)}&state=${city.state}&dayOffset=0`;
+        if (city.lat && city.lon) {
+          url += `&lat=${city.lat}&lon=${city.lon}`;
+        }
         console.log(`[CRON] Aquecendo cache para: ${city.name}, ${city.state}`);
         return fetch(url, { method: 'GET' });
       })
