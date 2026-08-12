@@ -25,10 +25,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br" suppressHydrationWarning>
       <body className={poppins.className}>
-        <div className="site-wrapper">
-          {children}
-          <Footer />
-        </div>
+        {children}
         <SpeedInsights />
         <Analytics />     
       </body>

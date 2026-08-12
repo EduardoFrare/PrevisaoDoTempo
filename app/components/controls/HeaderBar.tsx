@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiZap } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiZap, FiCode } from 'react-icons/fi';
 
 interface HeaderBarProps {
   dayOffset: string;
@@ -12,6 +12,7 @@ interface HeaderBarProps {
   onToggleTicker: () => void;
   isTickerOpen: boolean;
   onGenerateSummary: () => void;
+  onOpenEmbedHelper: () => void;
   selectedGroup: 'ALL' | 'GO' | 'OFERTAS';
   onGroupChange: (group: 'ALL' | 'GO' | 'OFERTAS') => void;
 }
@@ -36,6 +37,7 @@ export function HeaderBar({
   onToggleTicker,
   isTickerOpen,
   onGenerateSummary,
+  onOpenEmbedHelper,
   selectedGroup,
   onGroupChange
 }: HeaderBarProps) {
@@ -82,6 +84,10 @@ export function HeaderBar({
         </button>
       </div>
       <div className="header-actions">
+        <button onClick={onOpenEmbedHelper} className="toggle-all-charts-btn" title="Gerar Código Embed">
+          <span>Embed</span>
+          <FiCode />
+        </button>
         <button onClick={onGenerateSummary} className="toggle-all-charts-btn" title="Gerar Resumo da IA">
           <span>Resumo IA</span>
           <FiZap />

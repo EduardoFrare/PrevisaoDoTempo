@@ -11,7 +11,9 @@ import { INITIAL_CITIES } from "@/constants";
 import { fetchProcessedWeatherData } from "@/services/weatherService";
 import type { WeatherInfo, City } from "@/types/weather"; // Importando City
 import { AiSummaryModal } from "./components/AiSummaryModal/AiSummaryModal";
+import { EmbedHelperModal } from "./components/EmbedHelperModal/EmbedHelperModal";
 import { FiZap } from 'react-icons/fi';
+import Footer from "./components/controls/Footer";
 
 export default function Home() {
   const [cities, setCities] = useState<City[]>(INITIAL_CITIES); // Usando o tipo City
@@ -23,6 +25,7 @@ export default function Home() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isTickerOpen, setIsTickerOpen] = useState(false);
   const [areAllChartsOpen, setAreAllChartsOpen] = useState(false);
+  const [isEmbedHelperOpen, setIsEmbedHelperOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<'ALL' | 'GO' | 'OFERTAS'>('ALL');
   
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
@@ -117,60 +120,69 @@ export default function Home() {
   };
 
   return (
-    <main style={{ paddingTop: calculatePaddingTop() }}>
-      <HeaderBar
-        dayOffset={dayOffset}
-        onDayChange={setDayOffset}
-        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
-        isPanelOpen={isPanelOpen}
-        onToggleAllCharts={() => setAreAllChartsOpen(!areAllChartsOpen)}
-        areAllChartsOpen={areAllChartsOpen}
-        onToggleTicker={() => setIsTickerOpen(!isTickerOpen)}
-        isTickerOpen={isTickerOpen}
-        onGenerateSummary={handleGenerateSummary}
-        selectedGroup={selectedGroup}
-        onGroupChange={setSelectedGroup}
-      />
-      
-      {isTickerOpen && <WeatherTicker cities={initialCitiesData} />}
+    <div className="site-wrapper">
+      <main style={{ paddingTop: calculatePaddingTop() }}>
+        <HeaderBar
+          dayOffset={dayOffset}
+          onDayChange={setDayOffset}
+          onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
+          isPanelOpen={isPanelOpen}
+          onToggleAllCharts={() => setAreAllChartsOpen(!areAllChartsOpen)}
+          areAllChartsOpen={areAllChartsOpen}
+          onToggleTicker={() => setIsTickerOpen(!isTickerOpen)}
+          isTickerOpen={isTickerOpen}
+          onGenerateSummary={handleGenerateSummary}
+          onOpenEmbedHelper={() => setIsEmbedHelperOpen(true)}
+          selectedGroup={selectedGroup}
+          onGroupChange={setSelectedGroup}
+        />
+        
+        {isTickerOpen && <WeatherTicker cities={initialCitiesData} />}
 
-      <AddCityPanel
-        isOpen={isPanelOpen}
-        newCity={newCity}
-        onNewCityChange={setNewCity}
-        onAddCity={addCity}
-        errorMsg={errorMsg}
-      />
+        <AddCityPanel
+          isOpen={isPanelOpen}
+          newCity={newCity}
+          onNewCityChange={setNewCity}
+          onAddCity={addCity}
+          errorMsg={errorMsg}
+        />
 
-      <div className="app-container">
-        {isLoading ? (
-          <LoadingIndicator />
-        ) : (
-          <div className="cards">
-            {Object.values(weatherData)
-              .filter((city) => {
-                if (selectedGroup === 'ALL') return true;
-                return city.groups?.includes(selectedGroup);
-              })
-              .map((city) => (
-              <WeatherCard
-                key={city.name}
-                city={city}
-                onRemove={removeCity}
-                isAllChartsOpen={areAllChartsOpen}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        <div className="app-container">
+          {isLoading ? (
+            <LoadingIndicator />
+          ) : (
+            <div className="cards">
+              {Object.values(weatherData)
+                .filter((city) => {
+                  if (selectedGroup === 'ALL') return true;
+                  return city.groups?.includes(selectedGroup);
+                })
+                .map((city) => (
+                <WeatherCard
+                  key={city.name}
+                  city={city}
+                  onRemove={removeCity}
+                  isAllChartsOpen={areAllChartsOpen}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
-      <AiSummaryModal
-        isOpen={isAiModalOpen}
-        onClose={() => setIsAiModalOpen(false)}
-        summary={aiSummary}
-        modelUsed={modelUsed}
-        isLoading={isAiLoading}
-      />
-    </main>
+        <AiSummaryModal
+          isOpen={isAiModalOpen}
+          onClose={() => setIsAiModalOpen(false)}
+          summary={aiSummary}
+          modelUsed={modelUsed}
+          isLoading={isAiLoading}
+        />
+
+        <EmbedHelperModal 
+          isOpen={isEmbedHelperOpen} 
+          onClose={() => setIsEmbedHelperOpen(false)} 
+        />
+      </main>
+      <Footer />
+    </div>
   );
 }
