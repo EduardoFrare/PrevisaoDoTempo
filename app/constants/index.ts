@@ -16,5 +16,5 @@ export const INITIAL_CITIES: City[] = [
   { name: 'Ijui', state: 'RS', lat: -28.38, lon: -53.91 },
   { name: 'Vacaria', state: 'RS', lat: -28.51, lon: -50.93 },
   { name: 'Concordia', state: 'SC', lat: -27.23, lon: -52.02 },
-  { name: 'Joaçaba', state: 'SC', lat: -27.18, lon: -51.50 },
+  //{ name: 'Joaçaba', state: 'SC', lat: -27.18, lon: -51.50 },
 ];
