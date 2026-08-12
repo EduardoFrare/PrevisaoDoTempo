@@ -40,6 +40,7 @@ export interface WeatherInfo {
   currentTemperature?: number;
   lat?: number;
   lon?: number;
+  groups?: ('GO' | 'OFERTAS')[];
 }
 
 // Nova tipagem para as cidades, permitindo coordenadas opcionais
@@ -48,4 +49,5 @@ export interface City {
   state: string;
   lat?: number;
   lon?: number;
+  groups?: ('GO' | 'OFERTAS')[];
 }

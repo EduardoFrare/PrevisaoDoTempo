@@ -29,7 +29,15 @@ export default function WeatherCard({
   return (
     <div className="weather-card">
       <div className="card-header">
-        <h2 className="city-name">{city.name}</h2>
+        <div className="card-header-left">
+          <h2 className="city-name">{city.name}</h2>
+          {city.groups && (
+            <div className="group-badges">
+              {city.groups.includes('GO') && <span className="group-badge go">GO</span>}
+              {city.groups.includes('OFERTAS') && <span className="group-badge ofertas">OFERTAS</span>}
+            </div>
+          )}
+        </div>
 
         <div className="card-header-right">
           {/* Mostra a temperatura atual SÓ se for o dia de "Hoje" */}

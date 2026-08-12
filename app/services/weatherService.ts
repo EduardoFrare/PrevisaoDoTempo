@@ -19,7 +19,7 @@ export async function fetchProcessedWeatherData(
         }
         return res.json();
       })
-      .then(data => ({ city, data }));
+      .then(data => ({ city, data: { ...data, groups: city.groups } }));
   });
 
   const results = await Promise.all(weatherPromises);

@@ -23,6 +23,7 @@ export default function Home() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isTickerOpen, setIsTickerOpen] = useState(false);
   const [areAllChartsOpen, setAreAllChartsOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<'ALL' | 'GO' | 'OFERTAS'>('ALL');
   
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [aiSummary, setAiSummary] = useState("");
@@ -126,6 +127,9 @@ export default function Home() {
         areAllChartsOpen={areAllChartsOpen}
         onToggleTicker={() => setIsTickerOpen(!isTickerOpen)}
         isTickerOpen={isTickerOpen}
+        onGenerateSummary={handleGenerateSummary}
+        selectedGroup={selectedGroup}
+        onGroupChange={setSelectedGroup}
       />
       
       {isTickerOpen && <WeatherTicker cities={initialCitiesData} />}
@@ -143,7 +147,12 @@ export default function Home() {
           <LoadingIndicator />
         ) : (
           <div className="cards">
-            {Object.values(weatherData).map((city) => (
+            {Object.values(weatherData)
+              .filter((city) => {
+                if (selectedGroup === 'ALL') return true;
+                return city.groups?.includes(selectedGroup);
+              })
+              .map((city) => (
               <WeatherCard
                 key={city.name}
                 city={city}
@@ -154,14 +163,6 @@ export default function Home() {
           </div>
         )}
       </div>
-
-      <button 
-        onClick={handleGenerateSummary} 
-        className="ai-floating-button" 
-        title="Gerar Resumo da IA"
-      >
-        <FiZap size={24} />
-      </button>
 
       <AiSummaryModal
         isOpen={isAiModalOpen}

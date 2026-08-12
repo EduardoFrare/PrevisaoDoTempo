@@ -114,11 +114,37 @@ main {
 
 .day-selector {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.2); /* Caixa de grupo mais escura */
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
 }
 
-.day-selector button,
+.day-selector button {
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.day-selector button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.day-selector button.active {
+  background-color: var(--accent-color);
+  color: var(--white);
+}
+
+/* Os botões de ação à direita mantêm seu estilo com borda */
 .toggle-all-charts-btn {
   background-color: transparent;
   border: 1px solid var(--border-color);
@@ -133,17 +159,10 @@ main {
   gap: 5px;
 }
 
-.day-selector button:hover,
 .toggle-all-charts-btn:hover {
   background-color: var(--background);
   border-color: var(--accent-color);
   color: var(--text-primary);
-}
-
-.day-selector button.active {
-  background-color: var(--accent-color);
-  color: var(--white);
-  border-color: var(--accent-color);
 }
 
 .header-actions {
@@ -448,29 +467,65 @@ main {
   text-decoration: underline;
 }
 
-/* --- ESTILOS PARA O BOTÃO FLUTUANTE DE IA --- */
-.ai-floating-button {
-  position: fixed;
-  bottom: 25px;
-  right: 25px;
-  background-color: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+/* --- ESTILOS REMOVIDOS DO BOTAO FLUTUANTE DE IA, AGORA NO HEADER --- */
+
+/* --- GROUP FILTERS NO HEADER --- */
+.header-left-actions {
+  position: absolute;
+  left: 60px; /* espacamento do menu */
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px var(--shadow-color-light);
-  cursor: pointer;
-  z-index: 1050;
-  transition: all 0.2s ease;
+  gap: 4px;
+  background-color: rgba(0, 0, 0, 0.2); /* Caixa de grupo idêntica ao day-selector */
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
 }
 
-.ai-floating-button:hover {
-  background-color: var(--background);
-  border-color: var(--accent-color);
+.group-filter-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.group-filter-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
 }
 
+.group-filter-btn.active {
+  background-color: var(--accent-color);
+  color: var(--white);
+}
+
+/* --- GROUP BADGES --- */
+.group-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.group-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.group-badge.go {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.group-badge.ofertas {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}

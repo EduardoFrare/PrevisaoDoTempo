@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { FiMenu, FiX, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiZap } from 'react-icons/fi';
 
 interface HeaderBarProps {
   dayOffset: string;
@@ -11,6 +11,9 @@ interface HeaderBarProps {
   areAllChartsOpen: boolean;
   onToggleTicker: () => void;
   isTickerOpen: boolean;
+  onGenerateSummary: () => void;
+  selectedGroup: 'ALL' | 'GO' | 'OFERTAS';
+  onGroupChange: (group: 'ALL' | 'GO' | 'OFERTAS') => void;
 }
 
 const getFormattedDate = (offset: number): string => {
@@ -31,13 +34,36 @@ export function HeaderBar({
   onToggleAllCharts,
   areAllChartsOpen,
   onToggleTicker,
-  isTickerOpen
+  isTickerOpen,
+  onGenerateSummary,
+  selectedGroup,
+  onGroupChange
 }: HeaderBarProps) {
   return (
     <header className="header-bar">
       <button onClick={onTogglePanel} className="menu-button" aria-label="Adicionar cidade">
         {isPanelOpen ? <FiX /> : <FiMenu />}
       </button>
+      <div className="header-left-actions">
+        <button 
+          className={`group-filter-btn ${selectedGroup === 'ALL' ? 'active' : ''}`}
+          onClick={() => onGroupChange('ALL')}
+        >
+          Todos
+        </button>
+        <button 
+          className={`group-filter-btn ${selectedGroup === 'GO' ? 'active' : ''}`}
+          onClick={() => onGroupChange('GO')}
+        >
+          GO
+        </button>
+        <button 
+          className={`group-filter-btn ${selectedGroup === 'OFERTAS' ? 'active' : ''}`}
+          onClick={() => onGroupChange('OFERTAS')}
+        >
+          OFERTAS
+        </button>
+      </div>
       <div className="day-selector">
         <button className={dayOffset === "0" ? "active" : ""} onClick={() => onDayChange("0")}>
           {getFormattedDate(0)}
@@ -56,6 +82,10 @@ export function HeaderBar({
         </button>
       </div>
       <div className="header-actions">
+        <button onClick={onGenerateSummary} className="toggle-all-charts-btn" title="Gerar Resumo da IA">
+          <span>Resumo IA</span>
+          <FiZap />
+        </button>
         <button onClick={onToggleTicker} className="toggle-all-charts-btn">
           <span>{isTickerOpen ? 'Fechar Resumo' : 'Resumo do Tempo'}</span>
         </button>
