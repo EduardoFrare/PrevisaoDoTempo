@@ -68,12 +68,20 @@ main {
   right: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
+  justify-content: flex-start;
+  padding: 10px 10px;
   background-color: var(--card-bg);
   box-shadow: 0 2px 10px var(--shadow-color-light);
   z-index: 1001;
   height: 60px;
+  gap: 10px;
+}
+@media (min-width: 1024px) {
+  .header-bar {
+    justify-content: center;
+    padding: 10px 20px;
+    overflow-x: visible;
+  }
 }
 
 .add-city-panel {
@@ -96,30 +104,48 @@ main {
 }
 
 /* --- ESTILOS DOS CONTROLES DO HEADER --- */
-.menu-button {
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 24px;
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
+.desktop-menu-button {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .desktop-menu-button {
+    display: flex;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 .day-selector {
   display: flex;
   gap: 4px;
-  margin: 0 auto;
-  background-color: rgba(0, 0, 0, 0.2); /* Caixa de grupo mais escura */
+  background-color: rgba(0, 0, 0, 0.2);
   padding: 4px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
+  flex-shrink: 0;
+  max-width: calc(100vw - 80px); /* Leave space for hamburger */
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.day-selector::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .day-selector {
+    margin: 0 auto;
+  }
 }
 
 .day-selector button {
@@ -166,12 +192,82 @@ main {
 }
 
 .header-actions {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
+  flex-direction: column;
   gap: 10px;
+}
+@media (min-width: 1024px) {
+  .header-actions {
+    flex-direction: row;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+/* --- MOBILE MENU --- */
+.mobile-menu-toggle {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+@media (min-width: 1024px) {
+  .mobile-menu-toggle {
+    display: none;
+  }
+}
+
+.mobile-add-city-btn {
+  display: flex;
+}
+@media (min-width: 1024px) {
+  .mobile-add-city-btn {
+    display: none;
+  }
+}
+
+.mobile-menu-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background-color: var(--card-bg);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px var(--shadow-color-light);
+  transform: translateY(-10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease-in-out;
+}
+.mobile-menu-container.open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+@media (min-width: 1024px) {
+  .mobile-menu-container {
+    position: static;
+    flex-direction: row;
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 /* --- CARDS DE PREVISÃO (ALTERADO PARA ALINHAMENTO) --- */
@@ -495,20 +591,74 @@ main {
   text-decoration: underline;
 }
 
-/* --- ESTILOS REMOVIDOS DO BOTAO FLUTUANTE DE IA, AGORA NO HEADER --- */
+/* --- BOTAO FLUTUANTE DE IA --- */
+.floating-ai-container {
+  position: fixed;
+  bottom: 20px;
+  right: -130px; /* Hidden by default */
+  display: flex;
+  align-items: center;
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px 0 0 20px;
+  box-shadow: 0 4px 12px var(--shadow-color-light);
+  border-right: none;
+}
+
+.floating-ai-container.expanded {
+  right: 0;
+}
+
+.floating-ai-toggle {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border-color);
+}
+
+.floating-ai-action {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.floating-ai-action:hover {
+  color: var(--accent-color);
+}
 
 /* --- GROUP FILTERS NO HEADER --- */
 .header-left-actions {
-  position: absolute;
-  left: 60px; /* espacamento do menu */
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
+  flex-direction: column;
   gap: 4px;
   background-color: rgba(0, 0, 0, 0.2); /* Caixa de grupo idêntica ao day-selector */
   padding: 4px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
+}
+@media (min-width: 1024px) {
+  .header-left-actions {
+    flex-direction: row;
+    position: absolute;
+    left: 60px; /* espacamento do menu */
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 .group-filter-btn {

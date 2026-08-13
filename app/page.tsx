@@ -12,7 +12,7 @@ import { fetchProcessedWeatherData } from "@/services/weatherService";
 import type { WeatherInfo, City } from "@/types/weather"; // Importando City
 import { AiSummaryModal } from "./components/AiSummaryModal/AiSummaryModal";
 import { EmbedHelperModal } from "./components/EmbedHelperModal/EmbedHelperModal";
-import { FiZap } from 'react-icons/fi';
+import { FloatingAiButton } from "./components/FloatingAiButton";
 import Footer from "./components/controls/Footer";
 
 export default function Home() {
@@ -207,11 +207,12 @@ export default function Home() {
           areAllChartsOpen={areAllChartsOpen}
           onToggleTicker={() => setIsTickerOpen(!isTickerOpen)}
           isTickerOpen={isTickerOpen}
-          onGenerateSummary={handleGenerateSummary}
           onOpenEmbedHelper={() => setIsEmbedHelperOpen(true)}
           selectedGroup={selectedGroup}
           onGroupChange={setSelectedGroup}
         />
+        
+        <FloatingAiButton onGenerateSummary={handleGenerateSummary} />
         
         {isTickerOpen && <WeatherTicker cities={initialCitiesData} />}
 

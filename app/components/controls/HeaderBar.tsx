@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiZap, FiCode } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiZap, FiCode, FiPlus } from 'react-icons/fi';
 
 interface HeaderBarProps {
   dayOffset: string;
@@ -11,7 +11,6 @@ interface HeaderBarProps {
   areAllChartsOpen: boolean;
   onToggleTicker: () => void;
   isTickerOpen: boolean;
-  onGenerateSummary: () => void;
   onOpenEmbedHelper: () => void;
   selectedGroup: 'ALL' | 'GO' | 'OFERTAS';
   onGroupChange: (group: 'ALL' | 'GO' | 'OFERTAS') => void;
@@ -36,36 +35,26 @@ export function HeaderBar({
   areAllChartsOpen,
   onToggleTicker,
   isTickerOpen,
-  onGenerateSummary,
   onOpenEmbedHelper,
   selectedGroup,
   onGroupChange
 }: HeaderBarProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <header className="header-bar">
-      <button onClick={onTogglePanel} className="menu-button" aria-label="Adicionar cidade">
-        {isPanelOpen ? <FiX /> : <FiMenu />}
+      <button 
+        className="mobile-menu-toggle" 
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Menu"
+      >
+        {isMobileMenuOpen ? <FiX /> : <FiMenu />}
       </button>
-      <div className="header-left-actions">
-        <button 
-          className={`group-filter-btn ${selectedGroup === 'ALL' ? 'active' : ''}`}
-          onClick={() => onGroupChange('ALL')}
-        >
-          Todos
-        </button>
-        <button 
-          className={`group-filter-btn ${selectedGroup === 'GO' ? 'active' : ''}`}
-          onClick={() => onGroupChange('GO')}
-        >
-          GO
-        </button>
-        <button 
-          className={`group-filter-btn ${selectedGroup === 'OFERTAS' ? 'active' : ''}`}
-          onClick={() => onGroupChange('OFERTAS')}
-        >
-          OFERTAS
-        </button>
-      </div>
+
+      <button onClick={onTogglePanel} className="desktop-menu-button" aria-label="Adicionar cidade" title="Adicionar Cidade">
+        {isPanelOpen ? <FiX /> : <FiPlus />}
+      </button>
+
       <div className="day-selector">
         <button className={dayOffset === "0" ? "active" : ""} onClick={() => onDayChange("0")}>
           {getFormattedDate(0)}
@@ -83,22 +72,46 @@ export function HeaderBar({
           {getFormattedDate(4)}
         </button>
       </div>
-      <div className="header-actions">
-        <button onClick={onOpenEmbedHelper} className="toggle-all-charts-btn" title="Gerar Código Embed">
-          <span>Embed</span>
-          <FiCode />
-        </button>
-        <button onClick={onGenerateSummary} className="toggle-all-charts-btn" title="Gerar Resumo da IA">
-          <span>Resumo IA</span>
-          <FiZap />
-        </button>
-        <button onClick={onToggleTicker} className="toggle-all-charts-btn">
-          <span>{isTickerOpen ? 'Fechar Resumo' : 'Resumo do Tempo'}</span>
-        </button>
-        <button onClick={onToggleAllCharts} className="toggle-all-charts-btn">
-          <span>{areAllChartsOpen ? 'Fechar' : 'Mostrar Chuva'}</span>
-          {areAllChartsOpen ? <FiChevronUp /> : <FiChevronDown />}
-        </button>
+
+      <div className={`mobile-menu-container ${isMobileMenuOpen ? 'open' : ''}`}>
+        <div className="header-left-actions">
+          <button onClick={() => { onTogglePanel(); setIsMobileMenuOpen(false); }} className="toggle-all-charts-btn mobile-add-city-btn" title="Adicionar Cidade">
+            <span>Adicionar Cidade</span>
+            <FiPlus />
+          </button>
+          <button 
+            className={`group-filter-btn ${selectedGroup === 'ALL' ? 'active' : ''}`}
+            onClick={() => onGroupChange('ALL')}
+          >
+            Todos
+          </button>
+          <button 
+            className={`group-filter-btn ${selectedGroup === 'GO' ? 'active' : ''}`}
+            onClick={() => onGroupChange('GO')}
+          >
+            GO
+          </button>
+          <button 
+            className={`group-filter-btn ${selectedGroup === 'OFERTAS' ? 'active' : ''}`}
+            onClick={() => onGroupChange('OFERTAS')}
+          >
+            OFERTAS
+          </button>
+        </div>
+
+        <div className="header-actions">
+          <button onClick={onOpenEmbedHelper} className="toggle-all-charts-btn" title="Gerar Código Embed">
+            <span>Embed</span>
+            <FiCode />
+          </button>
+          <button onClick={onToggleTicker} className="toggle-all-charts-btn">
+            <span>{isTickerOpen ? 'Fechar Resumo' : 'Resumo do Tempo'}</span>
+          </button>
+          <button onClick={onToggleAllCharts} className="toggle-all-charts-btn">
+            <span>{areAllChartsOpen ? 'Fechar' : 'Mostrar Chuva'}</span>
+            {areAllChartsOpen ? <FiChevronUp /> : <FiChevronDown />}
+          </button>
+        </div>
       </div>
     </header>
   );
