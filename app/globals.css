@@ -400,6 +400,34 @@ main {
   color: var(--danger-color-hover);
   transform: scale(1.5);
 }
+
+/* --- SKELETON LOADER (FIX CLS) --- */
+.skeleton-card {
+  background-color: var(--card-bg);
+  min-height: 150px;
+  pointer-events: none;
+}
+.skeleton-card .card-header-skel {
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  margin: 10px 20px;
+  width: 60%;
+  animation: pulse 1.5s infinite;
+}
+.skeleton-card .card-body-skel {
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  margin: 10px 20px;
+  animation: pulse 1.5s infinite;
+  animation-delay: 0.2s;
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
 .add-city-panel .input-group {
   display: flex;
   gap: 10px;

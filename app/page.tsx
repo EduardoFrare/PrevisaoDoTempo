@@ -161,7 +161,19 @@ export default function Home() {
 
         <div className="app-container">
           {isLoading ? (
-            <LoadingIndicator />
+            <div className="cards">
+              {cities
+                .filter((city) => {
+                  if (selectedGroup === 'ALL') return true;
+                  return city.groups?.includes(selectedGroup);
+                })
+                .map((_, idx) => (
+                  <div key={idx} className="weather-card skeleton-card">
+                    <div className="card-header-skel"></div>
+                    <div className="card-body-skel"></div>
+                  </div>
+                ))}
+            </div>
           ) : (
             <div className="cards">
               {Object.values(weatherData)
