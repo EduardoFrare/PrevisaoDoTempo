@@ -50,6 +50,16 @@ function TickerEmbedContent() {
     }
     
     fetchWeather();
+
+    // Atualiza automaticamente a cada 30 minutos (1800000 ms)
+    const intervalId = setInterval(() => {
+      // Só gasta requisição se a aba estiver visível na tela da pessoa
+      if (document.visibilityState === 'visible') {
+        fetchWeather();
+      }
+    }, 30 * 60 * 1000);
+    
+    return () => clearInterval(intervalId);
   }, [group, customCitiesStr]);
 
   if (tickerCitiesData.length === 0) {

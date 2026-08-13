@@ -34,8 +34,8 @@ export default function Home() {
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchWeather() {
-      setIsLoading(true);
+    async function fetchWeather(silent = false) {
+      if (!silent) setIsLoading(true);
       setErrorMsg("");
       try {
         const data = await fetchProcessedWeatherData(cities, dayOffset);
@@ -45,11 +45,23 @@ export default function Home() {
         const errorMessage = (error as Error).message || "Falha ao buscar dados do tempo.";
         setErrorMsg(errorMessage);
       } finally {
-        setIsLoading(false);
+        if (!silent) setIsLoading(false);
       }
     }
-    if (cities.length > 0) fetchWeather();
-    else setIsLoading(false);
+    
+    if (cities.length > 0) {
+      fetchWeather();
+
+      const intervalId = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          fetchWeather(true); // true = refresh silencioso, sem tela de loading
+        }
+      }, 30 * 60 * 1000);
+      
+      return () => clearInterval(intervalId);
+    } else {
+      setIsLoading(false);
+    }
   }, [cities, dayOffset]);
 
   function addCity() {
