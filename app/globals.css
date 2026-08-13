@@ -662,3 +662,123 @@ main {
   0% { transform: translateY(0) scale(1); opacity: 1; }
   100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
 }
+
+/* NEW VEGAS */
+.easter-egg-vegas body {
+  background-color: #2b1f13 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+}
+.easter-egg-vegas .weather-card {
+  filter: sepia(1) hue-rotate(-30deg) saturate(3) brightness(0.8) contrast(1.2);
+  border: 1px solid #ffb347;
+  box-shadow: 0 0 10px rgba(255, 179, 71, 0.5);
+  background-color: rgba(43, 31, 19, 0.8) !important;
+}
+.easter-egg-vegas * {
+  color: #ffb347 !important;
+}
+.vegas-crt-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 6px 100%;
+  opacity: 0.8;
+}
+.vegas-crt-overlay::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+@keyframes flicker {
+  0% { opacity: 0.05; }
+  50% { opacity: 0.15; }
+  100% { opacity: 0.05; }
+}
+
+/* NIKKI GLITCH */
+.easter-egg-nikki body {
+  background-color: #050505 !important;
+  animation: colorGlitch 4s infinite;
+}
+.easter-egg-nikki .weather-card {
+  animation: cardGlitch 2s infinite;
+}
+.easter-egg-nikki .cards {
+  animation: containerGlitch 3s infinite;
+}
+.easter-egg-nikki .weather-info::before {
+  content: '🐈‍⬛ ';
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+  display: inline-block;
+}
+.easter-egg-nikki .weather-info svg {
+  display: none !important;
+}
+.easter-egg-nikki .city-name {
+  font-size: 0 !important;
+}
+.easter-egg-nikki .city-name::after {
+  content: "NO NO NO";
+  font-size: 1.5rem;
+  color: #dc2626;
+  font-family: monospace;
+  animation: floatText 0.5s infinite;
+}
+.easter-egg-nikki .city-name span {
+  display: none !important;
+}
+
+.glitch-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background: rgba(255, 0, 0, 0.05);
+  mix-blend-mode: multiply;
+  animation: overlayGlitch 0.5s infinite;
+}
+
+@keyframes colorGlitch {
+  0% { filter: invert(0); }
+  2% { filter: invert(0.8) hue-rotate(90deg); }
+  4% { filter: invert(0); }
+  100% { filter: invert(0); }
+}
+
+@keyframes cardGlitch {
+  0% { transform: translate(0); }
+  1% { transform: translate(-10px, 5px) skewX(20deg); opacity: 0.8; }
+  2% { transform: translate(10px, -5px) skewX(-20deg); opacity: 0.9; }
+  3% { transform: translate(0); opacity: 1; }
+  50% { transform: translate(0); }
+  51% { transform: translate(-2px, 2px); }
+  52% { transform: translate(0); }
+  100% { transform: translate(0); }
+}
+
+@keyframes containerGlitch {
+  0% { filter: blur(0); }
+  1% { filter: blur(2px) contrast(1.5); }
+  2% { filter: blur(0); }
+  98% { filter: blur(0); }
+  99% { filter: blur(4px); }
+  100% { filter: blur(0); }
+}
+
+@keyframes overlayGlitch {
+  0% { background: rgba(255, 0, 0, 0.05); }
+  50% { background: rgba(0, 255, 0, 0.05); }
+  100% { background: rgba(0, 0, 255, 0.05); }
+}

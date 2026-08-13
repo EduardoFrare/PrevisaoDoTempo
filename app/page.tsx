@@ -32,7 +32,7 @@ export default function Home() {
   const [aiSummary, setAiSummary] = useState("");
   const [modelUsed, setModelUsed] = useState(""); // Novo estado para o modelo
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [easterEgg, setEasterEgg] = useState<'none' | 'silent-hill' | 'bikini-bottom'>('none');
+  const [easterEgg, setEasterEgg] = useState<'none' | 'silent-hill' | 'bikini-bottom' | 'new-vegas' | 'nikki-glitch'>('none');
 
   useEffect(() => {
     async function fetchWeather(silent = false) {
@@ -67,17 +67,13 @@ export default function Home() {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      if (easterEgg === 'silent-hill') {
-        document.body.classList.add('easter-egg-silent-hill');
-      } else {
-        document.body.classList.remove('easter-egg-silent-hill');
-      }
-      
-      if (easterEgg === 'bikini-bottom') {
-        document.body.classList.add('easter-egg-bikini');
-      } else {
-        document.body.classList.remove('easter-egg-bikini');
-      }
+      const bodyClasses = ['easter-egg-silent-hill', 'easter-egg-bikini', 'easter-egg-vegas', 'easter-egg-nikki'];
+      bodyClasses.forEach(c => document.body.classList.remove(c));
+
+      if (easterEgg === 'silent-hill') document.body.classList.add('easter-egg-silent-hill');
+      if (easterEgg === 'bikini-bottom') document.body.classList.add('easter-egg-bikini');
+      if (easterEgg === 'new-vegas') document.body.classList.add('easter-egg-vegas');
+      if (easterEgg === 'nikki-glitch') document.body.classList.add('easter-egg-nikki');
     }
 
     const handleCancel = () => {
@@ -104,6 +100,18 @@ export default function Home() {
     }
     if (rawCity === "fenda do biquini" || rawCity === "fenda do biquíni") {
       setEasterEgg('bikini-bottom');
+      setNewCity("");
+      setIsPanelOpen(false);
+      return;
+    }
+    if (rawCity === "mojave" || rawCity === "new vegas") {
+      setEasterEgg('new-vegas');
+      setNewCity("");
+      setIsPanelOpen(false);
+      return;
+    }
+    if (rawCity === "freaky nikki" || rawCity === "bear bailey" || rawCity === "one wish willow") {
+      setEasterEgg('nikki-glitch');
       setNewCity("");
       setIsPanelOpen(false);
       return;
@@ -184,9 +192,10 @@ export default function Home() {
           <div className="bubble" style={{ left: '50%', width: '20px', height: '20px', animationDelay: '1s' }}></div>
           <div className="bubble" style={{ left: '70%', width: '40px', height: '40px', animationDelay: '3s' }}></div>
           <div className="bubble" style={{ left: '90%', width: '25px', height: '25px', animationDelay: '0.5s' }}></div>
-          <div className="message">Previsão indisponível:<br/>Cidade debaixo d'água 🧽</div>
         </div>
       )}
+      {easterEgg === 'new-vegas' && <div className="vegas-crt-overlay"></div>}
+      {easterEgg === 'nikki-glitch' && <div className="glitch-overlay"></div>}
 
       <main style={{ paddingTop: calculatePaddingTop() }}>
         <HeaderBar
