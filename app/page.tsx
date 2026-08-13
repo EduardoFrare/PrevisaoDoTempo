@@ -32,6 +32,7 @@ export default function Home() {
   const [aiSummary, setAiSummary] = useState("");
   const [modelUsed, setModelUsed] = useState(""); // Novo estado para o modelo
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [easterEgg, setEasterEgg] = useState<'none' | 'silent-hill' | 'bikini-bottom'>('none');
 
   useEffect(() => {
     async function fetchWeather(silent = false) {
@@ -64,8 +65,50 @@ export default function Home() {
     }
   }, [cities, dayOffset]);
 
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (easterEgg === 'silent-hill') {
+        document.body.classList.add('easter-egg-silent-hill');
+      } else {
+        document.body.classList.remove('easter-egg-silent-hill');
+      }
+      
+      if (easterEgg === 'bikini-bottom') {
+        document.body.classList.add('easter-egg-bikini');
+      } else {
+        document.body.classList.remove('easter-egg-bikini');
+      }
+    }
+
+    const handleCancel = () => {
+      if (easterEgg !== 'none') {
+        setEasterEgg('none');
+      }
+    };
+    
+    if (easterEgg !== 'none') {
+      setTimeout(() => window.addEventListener('click', handleCancel), 100);
+    }
+    return () => window.removeEventListener('click', handleCancel);
+  }, [easterEgg]);
+
   function addCity() {
     if (!newCity.trim()) return;
+
+    const rawCity = newCity.trim().toLowerCase();
+    if (rawCity === "silent hill") {
+      setEasterEgg('silent-hill');
+      setNewCity("");
+      setIsPanelOpen(false);
+      return;
+    }
+    if (rawCity === "fenda do biquini" || rawCity === "fenda do biquíni") {
+      setEasterEgg('bikini-bottom');
+      setNewCity("");
+      setIsPanelOpen(false);
+      return;
+    }
+
     const cityRegex = /^[a-zA-Z\u00C0-\u017F\s]+,\s*[A-Z]{2}$/;
     if (!cityRegex.test(newCity)) {
       setErrorMsg('Formato inválido. Use: Cidade, UF');
@@ -133,6 +176,18 @@ export default function Home() {
 
   return (
     <div className="site-wrapper">
+      {easterEgg === 'silent-hill' && <div className="fog-overlay"></div>}
+      {easterEgg === 'bikini-bottom' && (
+        <div className="water-overlay">
+          <div className="bubble" style={{ left: '10%', width: '30px', height: '30px', animationDelay: '0s' }}></div>
+          <div className="bubble" style={{ left: '30%', width: '50px', height: '50px', animationDelay: '2s' }}></div>
+          <div className="bubble" style={{ left: '50%', width: '20px', height: '20px', animationDelay: '1s' }}></div>
+          <div className="bubble" style={{ left: '70%', width: '40px', height: '40px', animationDelay: '3s' }}></div>
+          <div className="bubble" style={{ left: '90%', width: '25px', height: '25px', animationDelay: '0.5s' }}></div>
+          <div className="message">Previsão indisponível:<br/>Cidade debaixo d'água 🧽</div>
+        </div>
+      )}
+
       <main style={{ paddingTop: calculatePaddingTop() }}>
         <HeaderBar
           dayOffset={dayOffset}

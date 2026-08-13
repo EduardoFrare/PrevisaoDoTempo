@@ -557,3 +557,108 @@ main {
   color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
+
+/* --- EASTER EGGS --- */
+/* SILENT HILL */
+.easter-egg-silent-hill body {
+  background-color: #1a202c !important;
+}
+.easter-egg-silent-hill .weather-card {
+  filter: grayscale(0.8) sepia(0.3) brightness(0.6) blur(1px);
+  transition: filter 3s ease-in-out;
+}
+.easter-egg-silent-hill .weather-info {
+  color: #cbd5e1 !important;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.fog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    url('data:image/svg+xml;utf8,<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><filter id="f"><feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(%23f)" opacity="0.4"/></svg>'),
+    rgba(200, 210, 220, 0.25);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+  z-index: 9999;
+  animation: fogFadeIn 3s forwards, fogMove 30s linear infinite;
+  opacity: 0;
+}
+
+@keyframes fogFadeIn {
+  to { opacity: 1; }
+}
+@keyframes fogMove {
+  from { background-position: 0 0; }
+  to { background-position: 1000px 1000px; }
+}
+
+/* BIKINI BOTTOM */
+.water-overlay {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  width: 100vw; 
+  height: 100vh;
+  background: linear-gradient(180deg, rgba(0, 150, 255, 0.3) 0%, rgba(0, 50, 150, 0.85) 100%);
+  pointer-events: auto;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  animation: waterFadeIn 1s forwards;
+  backdrop-filter: blur(2px);
+}
+
+.water-overlay .message {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0px 4px 15px rgba(0,0,0,0.8);
+  z-index: 10000;
+  animation: floatText 3s ease-in-out infinite;
+  padding: 20px;
+}
+
+.easter-egg-bikini .cards {
+  animation: floatCards 4s ease-in-out infinite;
+}
+.easter-egg-bikini .weather-card {
+  filter: hue-rotate(180deg) saturate(1.5);
+  transition: filter 1s;
+}
+
+@keyframes waterFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes floatCards {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes floatText {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.bubble {
+  position: absolute;
+  bottom: -50px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+  animation: rise 4s infinite ease-in;
+}
+
+@keyframes rise {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+}
